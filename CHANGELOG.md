@@ -1,2 +1,1 @@
-# 1.20
-Opened Github Repository
+1.20: Opened Github Repository
