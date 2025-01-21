@@ -1,9 +1,0 @@
-{
-    "manifest_version": 3,
-    "name": "Blank",
-    "version": "1.0",
-   "description": "Blank chrome extension template",
- "action": {
-   "default_popup": "popup.html"
- }
-}
