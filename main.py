@@ -1,20 +1,6 @@
 from gpt4all import GPT4All
-import sys
-import time
-import threading
 from datetime import datetime
 import os
-
-def loading_animation():
-    animation = "|/-\\"
-    idx = 0
-    while loading.is_set():
-        sys.stdout.write('\rGenerating response... ' + animation[idx])
-        sys.stdout.flush()
-        idx = (idx + 1) % len(animation)
-        time.sleep(0.1)
-    sys.stdout.write('\r')
-    sys.stdout.flush()
 
 def save_chat_history(user_input, ai_response):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -34,10 +20,6 @@ def load_chat_history():
     else:
         print("\nNo previous chat history found.")
 
-# Create a threading Event for the loading animation
-loading = threading.Event()
-
-# Load model from local file
 model = GPT4All("Meta-Llama-3-8B-Instruct.Q4_0.gguf", model_path="models")
 
 # Display previous chat history
@@ -56,21 +38,10 @@ with model.chat_session():
             break
             
         if user_input:
-            loading.set()
-            loading_thread = threading.Thread(target=loading_animation)
-            loading_thread.start()
-            
             try:
                 response = model.generate(user_input, max_tokens=1024)
-                
-                loading.clear()
-                loading_thread.join()
-                
                 print("\nAI:", response)
-                
                 save_chat_history(user_input, response)
                 
             except Exception as e:
-                loading.clear()
-                loading_thread.join()
                 print(f"\nError: {str(e)}")
