@@ -1,1 +1,7 @@
 researching hugging face's reliability
+
+AI-driven generation of news summaries: https://hal.science/hal-04437765
+
+Navigating dataset documentations in AI with Hugging-Face specificallyL: http://arxiv.org/pdf/2401.13822
+
+For autobiographical summarization: https://www.tandfonline.com/doi/full/10.1080/10447318.2023.2286090
