@@ -7,3 +7,5 @@ Navigating dataset documentations in AI with Hugging-Face specificallyL: http://
 For autobiographical summarization: https://www.tandfonline.com/doi/full/10.1080/10447318.2023.2286090
 
 For medical abstract summarization: https://research.ebsco.com/c/o46j2u/viewer/pdf/m5vdfbojwz
+
+For generating medical records: https://academic.oup.com/jamia/article/27/1/99/5583723
