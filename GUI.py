@@ -62,12 +62,9 @@ inptlbl.pack(pady=5)
 #textbox for user to paste text 
 inputtxt = tk.Text(root, height=10, width=60)
 inputtxt.pack(pady=10)
+
 # create instance of pegasus model
-pegasus_model = Pegasus(inputtxt)
-
-
-
-
+pegasus_model = Pegasus()
 
 
 #GUI for OUTPUT TEXT
@@ -91,23 +88,29 @@ outputtxt.config(state=DISABLED) #disable editing for display purposes
 
 
 
-
-
-
-
-
-
 #creating button
 
-#integrat AI code
+#integrate AI code
 
 def button_clicked():
      #debugging purposes
     print("Clicked Button!")
-    inp = inputtxt.get(1.0, "end-1c")
+
+    # convert inputtxt to string
+    input_str = inputtxt.get(1.0, "end-1c")
+
+    # run through Pegasus
+    tokenized = pegasus_model.tokenize (input_str) # tokenize
+    summarized = pegasus_model.summarizer(tokenized) # summarize
+    summary = pegasus_model.detokenize(summarized) # detokenize
+
+    summary[0] = summary[0].replace ("<pad>", "")
+    summary[0] = summary[0].replace ("</s>", "")
+                             
+   # inp = summary #.get(1.0, "end-1c")
     outputtxt.config(state=NORMAL)#bring back editing
     outputtxt.delete(1.0, END) #clear anuthing from prev
-    outputtxt.insert(1.0, "Summarized input: "+inp) #take out summarized input eventually
+    outputtxt.insert(1.0, "Summarized input: " + summary[0])  #take out summarized input eventually
     outputtxt.config(state=DISABLED) #disable editing agaimn
     
     
