@@ -1,11 +1,32 @@
 # import pegasus
 from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+from GUI import *
+
+class Pegasus:
+    def __init__ (self, input_text):
+        # load pegasus for summarization
+        self.model_name = "google/pegasus-xsum"
+        self.tokenizer  = PegasusTokenizer.from_pretrained(self.model_name) # initialize pegasus' tokenizer
+        self.model  = PegasusForConditionalGeneration.from_pretrained(self.model_name) # initialize pegasus model
+        self.input_text = input_text
 
 
-# load pegasus for summarization
-model_name = "google/pegasus-xsum"
-tokenizer  = PegasusTokenizer.from_pretrained(model_name) # initialize pegasus' tokenizer
-model  = PegasusForConditionalGeneration.from_pretrained(model_name) # initialize pegasus model
+    def tokenizer(input_text): 
+        # tokenize text 
+        tokenized = self.tokenizer(input_text, truncation = True, padding = "longest", return_tensors = "pt")
+        return tokenized
+
+    def summarizer(tokenized_text):
+        #   summarize
+        summarized = self.model.generate(**tokenized)
+        return summarized
+
+    def detokenize(summarized_text):
+        # detokenize
+        summary = self.tokenizer.batch_decode (summarized)
+        return summary
+
+# run summarized text through LLM
 
 # input text (example text for now)
 sample_text = ("""The chicken nugget was developed in the 1950s by Robert C. Baker,
@@ -22,19 +43,4 @@ sample_text = ("""The chicken nugget was developed in the 1950s by Robert C. Bak
                     Perdue Farms in 1991, and its rise in popularity was possibly assisted by the
                     success of the Jurassic Park franchise.
  """ )
-
-# tokenize text 
-tokenized = tokenizer(sample_text, truncation = True, padding = "longest", return_tensors = "pt")
-
-# summarize
-summarized = model.generate(**tokenized) 
-
-# detokenize
-summary = tokenizer.batch_decode (summarized)
-
-# run summarized text through LLM
-
-#    output text
-print (sample_text)
-print (summary)
     

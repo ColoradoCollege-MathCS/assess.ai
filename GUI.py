@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import PhotoImage
+from pegasus import *
 #from PIL import Image
 #import sys
 #print(sys.path)
@@ -61,6 +62,8 @@ inptlbl.pack(pady=5)
 #textbox for user to paste text 
 inputtxt = tk.Text(root, height=10, width=60)
 inputtxt.pack(pady=10)
+# create instance of pegasus model
+pegasus_model = Pegasus(inputtxt)
 
 
 
