@@ -1,2 +1,6 @@
-models/
 __pycache__/
+*.py[cod]
+*$py.class
+model_files/
+medscribe_env/
+
