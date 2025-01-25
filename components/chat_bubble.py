@@ -20,7 +20,7 @@ class ChatBubble(tk.Frame):
             row=0,
             column=1 if is_user else 0,
             sticky="e" if is_user else "w",
-            padx=(50 if is_user else 10, 10 if is_user else 50)  # Asymmetric padding
+            padx=(50 if is_user else 10, 10 if is_user else 50)  
         )
         
         self.message = tk.Label(
