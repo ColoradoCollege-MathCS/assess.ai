@@ -11,3 +11,13 @@ ChatGPT's summaries were 70% shorter, rated as 'high quality' (paper explains ho
 
 For generating medical records: https://academic.oup.com/jamia/article/27/1/99/5583723
 If we need to, we can generate somewhat accurate medical records with AI with the processes listed in this article.
+
+Diagnostic Clinical Descision using AI: https://research.ebsco.com/c/o46j2u/search/details/2twy4tgkzb?q=summary%20evaluation%20ai
+
+Human centered test and evaluation of military AI: https://research.ebsco.com/c/o46j2u/search/details/ykosntpf7z?q=summary%20evaluation%20ai
+
+Medical abstract summary with AI: https://research.ebsco.com/c/o46j2u/search/details/d2afd65kjj?q=summary%20evaluation%20ai
+
+Evaluation of AI tools using the REACT framework: https://research.ebsco.com/c/o46j2u/search/details/j3d2odpqen?q=summary%20evaluation%20ai
+
+Use of AI in pathology: https://research.ebsco.com/c/o46j2u/search/details/7o7ngbt4vb?q=summary%20evaluation%20ai
