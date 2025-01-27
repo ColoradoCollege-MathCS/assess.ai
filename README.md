@@ -36,8 +36,3 @@ python download_model.py
 python main.py
 ```
 
-Note: The first time you run the application, it will create necessary secure directories and encryption keys.
-
-## Important Notes
-- This app follows best practices of HIPAA compliant applications, but is not HIPAA compliant.
-- Make sure to run `download_model.py` before first use of the application

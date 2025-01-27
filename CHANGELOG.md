@@ -7,7 +7,6 @@
 - Built interactive chat UI
 - Stores chat history (Unencrypted)
 
-
 ## 01-23
 
 ### Added
@@ -16,4 +15,3 @@
 - Integration with Pegasus model
 - Welcome screen with logo
 - Send button for text processing
-- ESC key functionality for application exit
