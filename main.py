@@ -9,7 +9,7 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 def main():
     # Initialize root and components
     root = tk.Tk()
-    root.title("medscribe.ai")
+    root.title("AssessAI")
     root.geometry("1000x1200")
     
     # Load chat history
