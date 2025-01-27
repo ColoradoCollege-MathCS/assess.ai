@@ -137,7 +137,7 @@ inputtxt = tk.Text(root, height=10, width=60)
 inputtxt.pack(pady=10)
 
 # create instance of pegasus model
-# pegasus_model = Pegasus()
+pegasus_model = Pegasus()
 
 
 #GUI for OUTPUT TEXT
