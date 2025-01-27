@@ -8,3 +8,4 @@ medscribe_env/
 chat_data/
 .env/
 finetunedmodels/
+.env/
