@@ -15,8 +15,8 @@ https://github.com/user-attachments/assets/82a473e8-4ae2-4352-b59b-a112da76b475
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/ColoradoCollege-MathCS/medscribe.ai
-cd medscribe.ai
+git clone https://github.com/ColoradoCollege-MathCS/assess.ai
+cd assess.ai
 ```
 
 2. Install dependencies:
