@@ -8,22 +8,10 @@ from pegasus import *
 
 root = tk.Tk()
 
-def pegasus_clicked():
-	print("pegasus clicked!")
-	root.destroy()
-
-def LLM_zero_clicked():
-	print("zero clicked!")
-	root.destroy()
-
-def LLM_one_clicked():
-	print("one clicked!")
-	root.destroy()
-
 #image for Logo
 image = PhotoImage(file = "logo.png")
-image = image.zoom(5)
-image = image.subsample(32)
+#image = image.zoom(5)
+#image = image.subsample(32)
 panel = Label(root, image = image)
 
 root.title("AssessAI")
@@ -40,90 +28,65 @@ e.pack()
 image_lbl = tk.Label(root, image=image)
 image_lbl.pack()
 
-
-# buttons for the LLMs here
-pegasus_button = tk.Button(root,
-		text="Pegasus AI",
-		command=pegasus_clicked,
-		activebackground="blue",
-		activeforeground="white",
-		anchor="center",
-		bd=3,
-		bg="lightgray",
-		disabledforeground="gray",
-		fg="black",
-		font=("Times New Roman", 12),
-		height=2,
-		highlightbackground="black",
-		highlightcolor="green",
-		justify="center",
-		overrelief="raised",
-		padx=10,
-		pady=5,
-		width=15,
-		wraplength=50)
-
-pegasus_button.pack(padx=20,pady=20)
-
-LLM_zero_button = tk.Button(root,
-		text="LLM 0",
-		command=LLM_zero_clicked,
-		activebackground="blue",
-		activeforeground="white",
-		anchor="center",
-		bd=3,
-		bg="lightgray",
-		disabledforeground="gray",
-		fg="black",
-		font=("Times New Roman", 12),
-		height=2,
-		highlightbackground="black",
-		highlightcolor="green",
-		justify="left",
-		overrelief="raised",
-		padx=10,
-		pady=5,
-		width=15,
-		wraplength=50)
-
-LLM_zero_button.pack(padx=20,pady=20)
-
-
-LLM_one_button = tk.Button(root,
-		text="LLM 1",
-		command=LLM_one_clicked,
-		activebackground="blue",
-		activeforeground="white",
-		anchor="center",
-		bd=3,
-		bg="lightgray",
-		disabledforeground="gray",
-		fg="black",
-		font=("Times New Roman", 12),
-		height=2,
-		highlightbackground="black",
-		highlightcolor="green",
-		justify="center",
-		overrelief="raised",
-		padx=10,
-		pady=5,
-		width=15,
-		wraplength=50)
-
-LLM_one_button.pack(padx=20,pady=20)		
-
 #if click, remove image
-#def image_click(event):
-#    image_lbl.destroy()
+def image_click(event):
+    image_lbl.destroy()
     #bigbutton.delete()
 
 
-# root.bind("<Button-1>", image_click)
+root.bind("<Button-1>", image_click)
 
 
+models = [
+	"Pegasus",
+	"Upload model..."
 
 
+]
 
+datasets = [
+	"Medical data",
+	"Upload set..."
+
+]
+
+modelinst = StringVar()
+datas = StringVar()
+
+modelinst.set("Pegasus")
+datas.set("Medical data")
+
+modeldrop = OptionMenu( root, modelinst, *models )
+datadrop = OptionMenu( root, datas, *datasets )
+
+modeldrop.config(width=15)
+datadrop.config(width=15)
+
+modeldrop.pack(padx=20,pady=20)
+datadrop.pack(padx=20,pady=20)
+
+def summarize():
+	print("you chose the " + modelinst.get() + " model and the " + datas.get() + " dataset.")
+
+summarize_button = tk.Button(root,
+		text="SUMMARIZE",
+		command=summarize,
+		activebackground="blue",
+		activeforeground="white",
+		anchor="center",
+		background="lightgray",
+		fg="black",
+		font=("Times New Roman",20),
+		height=2,
+		highlightbackground="black",
+		highlightcolor="green",
+		justify="center",
+		overrelief="raised",
+		padx=5,
+		pady=5,
+		width=30)
+
+summarize_button.pack(padx=20,pady=20)
 
 #GUI FOR INPUT TEXT 
 #label
