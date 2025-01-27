@@ -1,20 +1,38 @@
-# Medscribe.ai
+# Assess.ai
+Team Members: Ronan Takizawa, Kaylie Stuteville, Willa Polman, Anna Vu.
 
-A desktop application that helps summarize medical records using the Pegasus AI model.
+A Python-based chat interface using the Pegasus model from HuggingFace Transformers.
 
-![logo](https://github.com/user-attachments/assets/d547f1e9-18f3-429c-9da6-b0b4a2de8093)
+https://github.com/user-attachments/assets/82a473e8-4ae2-4352-b59b-a112da76b475
 
 
+
+## Features
+- Text Summarization with Pegasus LLM
+- Chat history storage (Currently not encrypted)
+- 
 ## Installation
 
-1. Clone this repository
-2. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the application:
-   ```bash
-   python main.py
-   ```
+1. Clone this repository:
+```bash
+git clone https://github.com/ColoradoCollege-MathCS/medscribe.ai
+cd medscribe.ai
+```
 
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+## Setup and Usage
+
+1. Download the required model first (this is required before first run):
+```bash
+python download_model.py
+```
+
+2. Start the application:
+```bash
+python main.py
+```
 
