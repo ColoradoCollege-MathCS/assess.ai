@@ -26,7 +26,7 @@ class LoginScreen(tk.Frame):
         # Logo/Title Section
         img_size = (100, 100)  
         try:
-            img = Image.open("assets/logo.png")
+            img = Image.open("assets/logo.jpeg")
             img = img.resize(img_size, Image.Resampling.LANCZOS)
             self.logo_img = ImageTk.PhotoImage(img)
             logo_label = tk.Label(self, image=self.logo_img, bg="#D2E9FC")
@@ -34,7 +34,7 @@ class LoginScreen(tk.Frame):
             print(f"Error loading logo: {e}")
             logo_label = tk.Label(
                 self,
-                text="Medscribe.ai",
+                text="Assess.ai",
                 bg="#D2E9FC",
                 fg="#1a1a1a",
                 font=("SF Pro Display", 32, "bold")

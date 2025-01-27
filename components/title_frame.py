@@ -6,7 +6,7 @@ class TitleFrame(tk.Frame):
         
         self.title_label = tk.Label(
             self,
-            text="Medscribe.ai",
+            text="Assess.ai",
             bg="#D2E9FC",
             fg="#1a1a1a",
             font=("SF Pro Display", 24, "bold")

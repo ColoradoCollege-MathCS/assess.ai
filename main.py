@@ -1,6 +1,6 @@
 import tkinter as tk
 import threading
-from gui import MedscribeGUI
+from gui import AssessAIGUI
 from chat_history import SecureChatHistory
 from chat import ChatBot
 import os
@@ -19,7 +19,7 @@ def main():
     chatbot = ChatBot()
     
     # Create GUI
-    app = MedscribeGUI(root, chat_history, chatbot)
+    app = AssessAIGUI(root, chat_history, chatbot)
     
     # Start model loading in background. Using threading here allows the GUI to render first when ready and not have to wait until model is ready.
     def load_model_background():

@@ -4,7 +4,7 @@ import threading
 from components import (ChatBubble, InputFrame, TitleFrame, 
                        ChatArea, LoadingIndicator, LoginScreen)
 
-class MedscribeGUI:
+class AssessAIGUI:
     def __init__(self, root, chat_history, chatbot):
         self.root = root  # Main Window
         self.chat_history = chat_history  # Variable managing message history
@@ -41,7 +41,7 @@ class MedscribeGUI:
     def setup_chat_screen(self):
         """Setup main chat interface"""
         self._clear_window()
-        self._configure_root("Medscribe.ai", "1000x1200")
+        self._configure_root("Assess.ai", "1000x1200")
         self._setup_styles()
         self._configure_grid()
         self._initialize_components()

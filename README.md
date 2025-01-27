@@ -1,5 +1,4 @@
-# medscribe.ai
-Repo for Medscribe.ai 
+# Assess.ai
 Team Members: Ronan Takizawa, Kaylie Stuteville, Willa Polman, Anna Vu.
 
 A Python-based chat interface using the Pegasus model from HuggingFace Transformers.
