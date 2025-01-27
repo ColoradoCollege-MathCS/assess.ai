@@ -3,8 +3,8 @@ Team Members: Ronan Takizawa, Kaylie Stuteville, Willa Polman, Anna Vu.
 
 A Python-based chat interface using the Pegasus model from HuggingFace Transformers.
 
+https://github.com/user-attachments/assets/82a473e8-4ae2-4352-b59b-a112da76b475
 
-https://github.com/user-attachments/assets/fdda21f8-ed24-4a7b-804f-4300034dcd0a
 
 
 ## Features
