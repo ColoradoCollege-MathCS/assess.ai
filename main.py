@@ -1,4 +1,4 @@
-from GUI import *
+from gui import *
 
 def main():
-    GUI_window = GUI()
+    GUI_window = gui()
