@@ -1,5 +1,11 @@
 # Changelog
 
+## 01-28
+
+### Added
+- Added navbar
+- Store pages in pages directory
+
 ## 01-27
 
 ### Added
