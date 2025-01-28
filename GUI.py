@@ -1,6 +1,8 @@
 import tkinter as tk
+import csv
+import os
 from tkinter import *
-from pegasus import *
+from Pegasus import *
 #from PIL import Image
 #import sys
 #print(sys.path)
@@ -65,8 +67,21 @@ datadrop.config(width=15)
 modeldrop.pack(padx=20,pady=20)
 datadrop.pack(padx=20,pady=20)
 
+def import_csv_data(filename):
+	__location__ = os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
+	path = os.path.abspath(__location__)
+	path = path + "/" + filename
+	print(path)
+	try:
+		with open(path) as csv_file:
+			csv_read=csv.reader(csv_file,delimiter=",")
+	except FileNotFoundError as e:
+		print("File not found")
+
 def summarize():
 	print("you chose the " + modelinst.get() + " model and the " + datas.get() + " dataset.")
+	if (datas.get() == "Upload set..."):
+		import_csv_data("enviro.csv")
 
 summarize_button = tk.Button(root,
 		text="SUMMARIZE",
