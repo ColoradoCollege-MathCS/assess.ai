@@ -28,6 +28,7 @@ pip install -r requirements.txt
 
 1. Download the required model first (this is required before first run):
 ```bash
+cd src
 python download_model.py
 ```
 

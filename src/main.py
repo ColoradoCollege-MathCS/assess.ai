@@ -1,8 +1,8 @@
 import tkinter as tk
 import threading
 from gui import AssessAIGUI
-from chat_history import SecureChatHistory
-from chat import ChatBot
+from utils.chat_history import SecureChatHistory
+from utils.chat import ChatBot
 import os
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
