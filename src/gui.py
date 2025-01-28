@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 from components.navbar import Navbar
 from pages.chat_page import ChatPage
 from pages.evaluations_page import EvaluationsPage
@@ -24,6 +25,11 @@ class AssessAIGUI:
     def _configure_root(self):
         self.root.title("Assess.ai")
         self.root.configure(bg="#D2E9FC")
+	
+	# gets exact location of logo.png
+        __location__ = os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
+        path = os.path.abspath(__location__)
+        path = path + "/assets/logo.png"
         
     def _configure_grid(self):
         # Configure grid weights
