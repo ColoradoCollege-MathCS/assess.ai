@@ -8,7 +8,7 @@ class ChatBot:
         self.tokenizer = None
         self.model = None
         self.device = None
-        self.model_path = Path(__file__).parent / "model_files" 
+        self.model_path = Path(__file__).parent / "../model_files" 
 
     def _load_model(self):
         if self.model is None:
