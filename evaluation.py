@@ -1,14 +1,10 @@
 #import evaluate library for now
 import evaluate
 import nltk
-import pycocovalcap
-import rouge-score
-import mathplotlib.pyplot as plt
+#import mathplotlib.pyplot as plt
 from nltk.translate.bleu_score import sentence_bleu
 from rouge_score import rouge_scorer
 from nltk.tokenize import word_tokenize
-
-
 
 #preprocess data
 #DATASETS shold be structured in a way that makes it easy to pair w ref texts. AKA
@@ -24,32 +20,22 @@ from nltk.tokenize import word_tokenize
 #test
 
 
+def rouge_calculator(reference, candidate):
+    
+#rouge = evaluate.load('rouge') #load metric
+    scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
+    
+    #reference text
+    #candidate- generated LLM text
+    #use rouge-score package
+    #use rouge-1 rouge-2 and rouge-L metrics
+    #report precision,recall, f1 score for each rouge metric
+    scores = scorer.score(reference, candidate)
 
-def rouge_calculator(reference, candidate)
-rouge = evaluate.load('rouge') #load metric
-reference = []
-candidate []
-#reference text
-#candidate- generated LLM text
-#use rouge-score package
-#use rouge-1 rouge-2 and rouge-L metrics
-#report precision,recall, f1 score for each rouge metric
-rouge_results = rouge.compute(predictions=candidate,
-                                     references=reference)
+    for key in scores:
+        print(f'{key}: {scores[key]}')
 
-print(f"ROUGE-1 Precision : {rouge_results['rouge1'].precision:.4f}, Recall : {rouge_results['rouge1'].recall:.4f}, F1 Score: {rouge_results['rouge1'].f1:.4f}")
-
-print(f"ROUGE-2 Precision : {rouge_results['rouge2'].precision:.4f}, Recall : {rouge_results['rouge2'].recall:.4f},  F1 Score: {rouge_results['rouge2'].f1:.4f}")
-print(f"ROUGE-L Precision : {rouge_results['rougeL'].precision:.4f}, Recall : {rouge_results['rougeL'].recall:.4f}, F1 Score: {rouge_results['rougeL'].f1:.4f}")
-
-#print result for ROUGE -1
-
-#print result for Rouge -2
-
-
-#print result for rouge-L
-
-return results
+    return scores
 
 
 
@@ -57,27 +43,39 @@ return results
 
 
 
-def bleu_calculator(reference, candidate)
-bleu = evaluate.load("bleu") #load metric
-reference = []word_tokenize(ref) for ref in reference]
-candidate [word_tokenizer(cand) for cand in candidate]
-#reference text
-#candidate- generated LLM text
-#tokenize
-#use nltk.translate.bley_score.sentence_bley
-#works by comparing ngrams in both refernece and candidate text
-#calculate BLEU for single sentence or over multiple samples
-bleu_results = sentence_bleu(reference, candidate)
+def bleu_calculator(reference, candidate):
+    # Define your desired weights (example: higher weight for bi-grams)
+    weights = (0.25, 0.25, 0, 0)  # Weights for uni-gram, bi-gram, tri-gram, and 4-gram
 
-print(f"BLEU Score: {bleu_results['bleu'] * 100:.2f}")
+    candidate_tokens = candidate.split()
+    reference_tokens = reference.split()
 
-return bleu_results
+    #bleu = evaluate.load("bleu") #load metric
+    #reference = []word_tokenize(ref) for ref in reference]
+    #candidate [word_tokenizer(cand) for cand in candidate]
+    #reference text
+    #candidate- generated LLM text
+    #tokenize
+    #use nltk.translate.bley_score.sentence_bley
+    #works by comparing ngrams in both refernece and candidate text
+    #calculate BLEU for single sentence or over multiple samples
+
+    bleu_results = sentence_bleu([reference_tokens], candidate_tokens, weights=weights)
+    # Print the BLEU score
+    print(f"BLEU score: {bleu_results:.4f}")
+
+
+
+#print(f"BLEU Score: {bleu_results['bleu'] * 100:.2f}")
+
+    return bleu_results
 
 
 
 
 
-def average_scores(ref_list, candid_list)
+def average_scores(ref_list, candid_list):
+    
 #calculate the averagbe score across all ex
 #for BLEU- compure BLEU for each sentence pair take the mean of BLEU scores
 #for rouge, you can take thw average precision, recall, and f1 scores
@@ -98,27 +96,21 @@ def display_results(rouge_results, bleu_results)
 
 
 
-def graph_results(rouge_results, bleu_results)
+def graph_results(rouge_results, bleu_results):
 #graph and display calculated results above in a fgraph or trendlune.
 #plotting the BLEU/ROUGE scores over time
 #mathplotlib
 
+def main():
+    reference = "The cat was found under the bed."
+    candidate = "The cat was under the bed."
+    print("Calculating ROUGE scores:")
+    rouge_scores = rouge_calculator(reference, candidate)
+    print("\nCalculating BLEU score:")
+    bleu_score = bleu_calculator(reference, candidate)
 
 
+if __name__ == '__main__':
+    main()
 
-
-
-#example sentences (non tokenized)
-reference = ["the cat is on the mat"]
-candidate = ["the cat is on mat"]
-
-
-# BLEU expects plain text inputs
-bleu_results = bleu_metric.compute(predictions=candidate, references=reference)
-print(f"BLEU Score: {bleu_results['bleu'] * 100:.2f}")
-
-
-# ROUGE expects plain text inputs
-rouge_results = rouge_metric.compute(predictions=candidate,
-                                     references=reference)
 
