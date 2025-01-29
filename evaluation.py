@@ -20,16 +20,11 @@ from nltk.tokenize import word_tokenize
 #test
 
 
-def rouge_calculator(reference, candidate):
+def rouge_calculator(reference, candidate): #caulculates rouge metric
     
 #rouge = evaluate.load('rouge') #load metric
     scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
     
-    #reference text
-    #candidate- generated LLM text
-    #use rouge-score package
-    #use rouge-1 rouge-2 and rouge-L metrics
-    #report precision,recall, f1 score for each rouge metric
     scores = scorer.score(reference, candidate)
 
     for key in scores:
@@ -38,33 +33,16 @@ def rouge_calculator(reference, candidate):
     return scores
 
 
-
-
-
-
-
 def bleu_calculator(reference, candidate):
-    # Define your desired weights (example: higher weight for bi-grams)
     weights = (0.25, 0.25, 0, 0)  # Weights for uni-gram, bi-gram, tri-gram, and 4-gram
-
-    candidate_tokens = candidate.split()
+    candidate_tokens = candidate.split() #tokenize
     reference_tokens = reference.split()
 
-    #bleu = evaluate.load("bleu") #load metric
-    #reference = []word_tokenize(ref) for ref in reference]
-    #candidate [word_tokenizer(cand) for cand in candidate]
-    #reference text
-    #candidate- generated LLM text
-    #tokenize
-    #use nltk.translate.bley_score.sentence_bley
     #works by comparing ngrams in both refernece and candidate text
-    #calculate BLEU for single sentence or over multiple samples
 
     bleu_results = sentence_bleu([reference_tokens], candidate_tokens, weights=weights)
-    # Print the BLEU score
+    # print the BLEU score
     print(f"BLEU score: {bleu_results:.4f}")
-
-
 
 #print(f"BLEU Score: {bleu_results['bleu'] * 100:.2f}")
 
@@ -91,7 +69,6 @@ def display_results(rouge_results, bleu_results)
 
 #print statements
 #print statements
-
 
 
 
