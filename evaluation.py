@@ -7,7 +7,7 @@ import mathplotlib.pyplot as plt
 from nltk.translate.bleu_score import sentence_bleu
 from rouge_score import rouge_scorer
 from nltk.tokenize import word_tokenize
-
+from nltk.translate.meteor_score import meteor_score
 
 
 #preprocess data
@@ -74,8 +74,17 @@ print(f"BLEU Score: {bleu_results['bleu'] * 100:.2f}")
 return bleu_results
 
 
+
+# takes in a reference (the original) and a candidate (the generated)
 def meteor_calculator(reference, candidate)
-meteor
+
+	# hardcode for now
+	candidate = "the quick brown fox jumped over the lazy dog"
+	reference = "a fast brown fox leads over a lazy dog"
+	
+	# uses nlkt translator
+	score = meteor_score([reference], candidate)
+	print(f"METEOR Score: {score}")
 
 
 
