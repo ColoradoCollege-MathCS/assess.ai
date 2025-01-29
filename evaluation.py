@@ -85,6 +85,7 @@ def meteor_calculator(reference, candidate)
 	# uses nlkt translator
 	score = meteor_score([reference], candidate)
 	print(f"METEOR Score: {score}")
+	return score
 
 
 
