@@ -1,4 +1,6 @@
 import tkinter as tk
+import os
+from tkinter import *
 
 class HomePage:
     def __init__(self, root):
@@ -9,6 +11,12 @@ class HomePage:
         container = tk.Frame(self.root, bg="#D2E9FC")
         container.grid(row=1, column=1, sticky="nsew")
         
+        __location__ = os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
+        path = os.path.abspath(__location__)
+        path = path + "/logo.png"
+
+        print(path)
+
         # Placeholder content
         tk.Label(
             container,
