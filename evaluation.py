@@ -5,11 +5,7 @@ import nltk
 from nltk.translate.bleu_score import sentence_bleu
 from rouge_score import rouge_scorer
 from nltk.tokenize import word_tokenize
-<<<<<<< HEAD
 from nltk.translate.meteor_score import meteor_score
-
-=======
->>>>>>> 3aa1a6a5bf9fb39530b9f695416247f251f1d8d8
 
 #preprocess data
 #DATASETS shold be structured in a way that makes it easy to pair w ref texts. AKA
@@ -54,30 +50,6 @@ def bleu_calculator(reference, candidate):
     return bleu_results
 
 
-
-
-
-<<<<<<< HEAD
-
-
-def bleu_calculator(reference, candidate)
-bleu = evaluate.load("bleu") #load metric
-reference = []word_tokenize(ref) for ref in reference]
-candidate [word_tokenizer(cand) for cand in candidate]
-#reference text
-#candidate- generated LLM text
-#tokenize
-#use nltk.translate.bley_score.sentence_bley
-#works by comparing ngrams in both refernece and candidate text
-#calculate BLEU for single sentence or over multiple samples
-bleu_results = sentence_bleu(reference, candidate)
-
-print(f"BLEU Score: {bleu_results['bleu'] * 100:.2f}")
-
-return bleu_results
-
-
-
 # takes in a reference (the original) and a candidate (the generated)
 def meteor_calculator(reference, candidate)
 
@@ -91,12 +63,7 @@ def meteor_calculator(reference, candidate)
 	return score
 
 
-
-def average_scores(ref_list, candid_list)
-=======
 def average_scores(ref_list, candid_list):
-    
->>>>>>> 3aa1a6a5bf9fb39530b9f695416247f251f1d8d8
 #calculate the averagbe score across all ex
 #for BLEU- compure BLEU for each sentence pair take the mean of BLEU scores
 #for rouge, you can take thw average precision, recall, and f1 scores
@@ -104,7 +71,7 @@ def average_scores(ref_list, candid_list):
 
 
 
-def display_results(rouge_results, bleu_results)
+def display_results(rouge_results, bleu_results):
 #bleu is a single score, float between 0 and 1
 # rouge provudes precision, recall, and f1 scores for each metric (rouge1 rouge2 rougeL
 #print them and display them to a save file
@@ -132,5 +99,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
