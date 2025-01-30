@@ -1,0 +1,37 @@
+To get METEOR working:
+
+Download the punkt_tab.zip file in the github and put it somewhere easy to find (desktop, downloads, etc)
+
+Navigate to Users/admin_user folder
+	For example, Users/jane_doe
+
+Unzip it
+
+Create a folder called nltk_data
+
+Go into the folder
+
+Create a folder named tokenizers
+
+Place the unzipped file inside the tokenizers folder
+
+Navigate to terminal and run python3 download_nltk.py
+
+Download the third-party item in the collections tab
+
+Navigate to the corpa tab
+
+download the wordnet and omw-1.4 items
+
+Close the tab
+
+In terminal run bash '/Applications/Python 3.9/Install Certificates.command'
+	If your Python is not 3.9 or it throws an error here, run in terminal run python3 --version
+	Take the first two numbers and replace Python 3.9 with whatever version
+	Do not include the end number
+
+Run the test_eval.py file and test if it produces a number
+
+It will run a few download commands as well
+
+This works as of 1/30/25
