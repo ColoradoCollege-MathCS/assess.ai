@@ -8,14 +8,15 @@ class ChatBot:
         self.tokenizer = None
         self.model = None
         self.device = None
-        self.model_path = Path(__file__).parent / "../model_files" 
-
+        #self.model_path = Path(__file__).parent / "../model_files"
+        self.model_path = "google/pegasus-xsum"
     def _load_model(self):
         if self.model is None:
             self.tokenizer = PegasusTokenizer.from_pretrained(self.model_path)
             self.model = PegasusForConditionalGeneration.from_pretrained(self.model_path)
             self.device = torch.device('cpu')
             self.model = self.model.to(self.device)
+        # else load selected model
 
     def get_response(self, user_input):
         if not user_input.strip():

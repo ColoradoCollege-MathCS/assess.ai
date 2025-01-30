@@ -19,7 +19,7 @@ class AssessAIGUI:
         self._configure_root()
         self._configure_grid()
         self._setup_navbar()
-        self.show_page("chat")  # Start with chat page
+        self.show_page("chat")  # Start with chat page # change to starting with homepage
         
     def _configure_root(self):
         self.root.title("Assess.ai")
