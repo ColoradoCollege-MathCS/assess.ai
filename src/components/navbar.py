@@ -1,6 +1,6 @@
-import tkinter as tk
 from PIL import Image, ImageTk
 from pathlib import Path
+import tkinter as tk
 
 # Navigation items
 nav_items = [
@@ -18,6 +18,7 @@ class Navbar(tk.Frame):
         self.show_page_callback = show_page_callback
         self.current_page = "chat"  # Default page
         self.buttons = {}  # Store button references
+        self.logo_photo = None  # Keep reference to prevent garbage collection
         self._setup_navbar()
         
     def _setup_navbar(self):
@@ -37,16 +38,18 @@ class Navbar(tk.Frame):
         logo_container.pack(fill="x", pady=(20, 30))
         
         try:
-            logo_img = Image.open(Path("assets/logo.jpeg"))
+            logo_path = Path(__file__).parent.parent / "assets" / "logo.jpeg"
+            
+            logo_img = Image.open(logo_path)
             logo_width = 180  
             aspect_ratio = logo_img.height / logo_img.width
             logo_height = int(logo_width * aspect_ratio)
             logo_img = logo_img.resize((logo_width, logo_height), Image.Resampling.LANCZOS)
-            logo_photo = ImageTk.PhotoImage(logo_img)
+            self.logo_photo = ImageTk.PhotoImage(logo_img)
             
             logo_label = tk.Label(
                 logo_container,
-                image=logo_photo,
+                image=self.logo_photo,
                 bg="#FFFFFF"
             ) 
             logo_label.pack(pady=(0, 20))
@@ -119,6 +122,7 @@ class Navbar(tk.Frame):
                     fg="#1a1a1a",
                     cursor="hand2"
                 )
+
 # Hover effect
     def _on_hover(self, container, page):
         if page != self.current_page:
