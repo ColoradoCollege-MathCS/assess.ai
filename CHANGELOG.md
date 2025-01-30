@@ -1,5 +1,9 @@
 # Changelog
 
+## 1-30
+- Added Finetuning
+- Added Finetuning via GUI
+
 ## 01-28
 
 ### Added
