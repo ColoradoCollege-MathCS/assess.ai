@@ -60,8 +60,7 @@ class FineTuner:
             # Create dataset
             dataset = TextDataset(
                 train_data, 
-                self.tokenizer, 
-                max_length=self.config['max_length']
+                self.tokenizer
             )
             
             # Calculate training batches

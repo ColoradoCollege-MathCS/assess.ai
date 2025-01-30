@@ -23,8 +23,6 @@ class FinetuneForm:
             "batch_size": {"min": 1, "max": 32},          # Batch size for training
             "learning_rate": {"min": 1e-6, "max": 1e-3},  # Learning rate range
             "max_samples": {"min": 10, "max": 10000},     # Maximum number of training samples
-            "max_length": {"min": 64, "max": 1024},       # Maximum sequence length
-            "num_beams": {"min": 1, "max": 8}             # Number of beams for beam search
         }
         
         self.default_config = {
@@ -32,9 +30,7 @@ class FinetuneForm:
                 "num_epochs": 3,
                 "batch_size": 2,
                 "learning_rate": 2e-5,
-                "max_samples": 100,
-                "max_length": 256,
-                "num_beams": 4
+                "max_samples": 100
             }
         }
         
@@ -104,8 +100,7 @@ class FinetuneForm:
                 if action == '1':  # Insert action
                     try:
                         # Validate integer fields
-                        if param in ["num_epochs", "batch_size", "max_samples", "max_length", 
-                                   "num_beams"]:
+                        if param in ["num_epochs", "batch_size", "max_samples"]:
                             if not value == "" and not value.isdigit(): #Check if value is a whole number and not a digit
                                 return False
                             if value and int(value) > self.param_limits[param]["max"]: #Check if its within the limit
@@ -172,8 +167,7 @@ class FinetuneForm:
         # Check parameters
         try:
             limits = self.param_limits[param]
-            if param in ["num_epochs", "batch_size", "max_samples", "max_length", 
-                        "num_beams"]:
+            if param in ["num_epochs", "batch_size", "max_samples"]:
                 value = int(value)
             else:
                 value = float(value)
