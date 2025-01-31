@@ -51,11 +51,11 @@ def bleu_calculator(reference, candidate):
 
 
 # takes in a reference (the original) and a candidate (the generated)
-def meteor_calculator(reference, candidate)
+def meteor_calculator(reference, candidate):
 
 	# hardcode for now
-	candidate = "the quick brown fox jumped over the lazy dog"
-	reference = "a fast brown fox leads over a lazy dog"
+	#candidate = "the quick brown fox jumped over the lazy dog"
+	#reference = "a fast brown fox leads over a lazy dog"
 	
 	# uses nlkt translator
 	score = meteor_score([reference], candidate)
@@ -63,7 +63,7 @@ def meteor_calculator(reference, candidate)
 	return score
 
 
-def average_scores(ref_list, candid_list):
+#def average_scores(ref_list, candid_list):
 #calculate the averagbe score across all ex
 #for BLEU- compure BLEU for each sentence pair take the mean of BLEU scores
 #for rouge, you can take thw average precision, recall, and f1 scores
@@ -71,7 +71,7 @@ def average_scores(ref_list, candid_list):
 
 
 
-def display_results(rouge_results, bleu_results):
+#def display_results(rouge_results, bleu_results):
 #bleu is a single score, float between 0 and 1
 # rouge provudes precision, recall, and f1 scores for each metric (rouge1 rouge2 rougeL
 #print them and display them to a save file
@@ -83,7 +83,7 @@ def display_results(rouge_results, bleu_results):
 
 
 
-def graph_results(rouge_results, bleu_results):
+#def graph_results(rouge_results, bleu_results):
 #graph and display calculated results above in a fgraph or trendlune.
 #plotting the BLEU/ROUGE scores over time
 #mathplotlib
