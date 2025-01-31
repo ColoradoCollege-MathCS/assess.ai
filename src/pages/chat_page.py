@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import threading
+from tkinter import messagebox
 from components import (
     ChatBubble, 
     InputFrame, 
@@ -8,16 +9,12 @@ from components import (
     ChatArea, 
     LoadingIndicator
 )
-
-from utils.chat_history import SecureChatHistory
-from utils.chat import ChatBot
+from utils.chat import ChatBot  
 
 class ChatPage:
     def __init__(self, root):
-    
         self.root = root
-        self.chat_history = SecureChatHistory()
-        self.chatbot = ChatBot()
+        self.chatbot = ChatBot()  
         self.is_processing = False
         
         # Create main container for chat page
@@ -93,34 +90,28 @@ class ChatPage:
             self.set_processing_state(True)  # Disable input while processing
             
             # Start AI response thread
-            self._get_ai_response_threaded(message, current_scroll)
+            self._get_ai_response_threaded(message)
             
         except Exception as e:
             print(f"Error sending message: {str(e)}")
-            self.set_processing_state(True)
+            self.set_processing_state(False)  # Fixed: was True before
         
-    def _get_ai_response_threaded(self, user_input, scroll_position):
+    def _get_ai_response_threaded(self, user_input):
         def get_response():
             try:
                 response = self.chatbot.get_response(user_input)
-                self.root.after(0, self._handle_ai_response, response, user_input, scroll_position)
+                self.root.after(0, self._handle_ai_response, response)
             except Exception as e:
                 self.root.after(0, self._handle_ai_error, f"Error: {str(e)}")
         
-        thread = threading.Thread(target=get_response)
-        thread.daemon = True
-        thread.start()
+        threading.Thread(target=get_response, daemon=True).start()
             
-    def _handle_ai_response(self, response, user_input, scroll_position):
+    def _handle_ai_response(self, response):
         try:
             self.loading.stop()
             self.add_message(response, is_user=False)
             # After adding AI response, ensure we scroll to bottom
             self.root.after(100, self.chat_area.smooth_scroll_to_bottom)
-            self.chat_history.save_chat_entry({
-                'user_input': user_input,
-                'ai_response': response
-            })
             self.set_processing_state(False)  # Re-enable input after response
         except Exception as e:
             print(f"Error handling response: {str(e)}")
@@ -146,7 +137,7 @@ class ChatPage:
             
     def load_chat_history(self):
         try:
-            entries = self.chat_history.load_chat_history()
+            entries = self.chatbot.load_chat_history()  
             for entry in entries:
                 chat_data = entry['data']
                 self.add_message(chat_data['user_input'], is_user=True)
@@ -155,8 +146,8 @@ class ChatPage:
             print(f"Error loading chat history: {str(e)}")
         
         self.root.after(50, lambda: self.chat_area.canvas.yview_moveto(5.0))
-    
-    
+
+
 """
 We use threading in this app to keep app responsive while the LLM response is being returned. 
 Before without threading, the app would pause and not be responsive until the LLM response comes. 
