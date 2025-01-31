@@ -3,7 +3,6 @@ from torch.utils.data import DataLoader
 from transformers import PegasusForConditionalGeneration, PegasusTokenizer
 import json
 from pathlib import Path
-import time
 from datetime import datetime
 from .data_loader import TextDataset, load_dataset
 import random
@@ -30,7 +29,7 @@ The loss value reported during training tells you how well the model is learning
 class FineTuner:
     def __init__(self, model_path, config_str):
         self.model_path = Path(model_path)
-        # Use GPU if available
+        # Use CPU
         self.device = torch.device('cpu')
         
         # Parse configuration from JSON string
@@ -44,26 +43,29 @@ class FineTuner:
         )
         self.model.to(self.device)
         
-    def load_dataset(self, data_path):
-        return load_dataset(data_path, max_samples=self.config['max_samples'])
+    def load_dataset(self, data_path,start_idx, end_idx):
+        # Load dataset with dataset validation
+        return load_dataset(data_path, start_idx=start_idx, end_idx=end_idx)
     
     def fine_tune(self, train_data, progress_callback=None):
         try:
-            # Create output directory with timestamp
+            # Create output directory with timestamp and range info
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            start_idx = self.config.get('start_idx', 0)
+            end_idx = self.config.get('end_idx', len(train_data))
             base_dir = Path("../model_files/finetunedmodels")
             base_dir.mkdir(exist_ok=True)
             
-            output_dir = base_dir / f"fine_tuned_{timestamp}"
+            # Include range info in output directory name
+            output_dir = base_dir / f"fine_tuned_{timestamp}_range_{start_idx}_{end_idx}"
             output_dir.mkdir(parents=True)
             
-            # Create dataset
+            # Create TextDataset Object to easily load into Pytorch's Dataloader
             dataset = TextDataset(
                 train_data, 
                 self.tokenizer
             )
             
-            # Calculate training batches
             total_samples = len(train_data)
             batch_size = self.config['batch_size']
             total_batches = (total_samples + batch_size - 1) // batch_size
@@ -83,7 +85,7 @@ class FineTuner:
                 lr=self.config['learning_rate']
             )
             
-            print(f"Starting training with {total_samples} samples in {total_batches} batches per epoch")
+            print(f"Starting training with {total_samples} samples (range {start_idx}-{end_idx}) in {total_batches} batches per epoch")
             
             for epoch in range(self.config['num_epochs']):
                 self.model.train()
