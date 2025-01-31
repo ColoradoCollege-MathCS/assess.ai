@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import csv
 
+# Object to convert text dataset into an object accessible by Pytorch's Dataloader
 class TextDataset(Dataset):
     def __init__(self, data, tokenizer, max_length=256):
         self.data = data
@@ -45,74 +46,60 @@ class TextDataset(Dataset):
             'target_text': item['target_text']
         }
 
-def load_dataset(data_path, max_samples=None):
+
+def load_dataset(data_path, start_idx=0, end_idx=100):
     data_path = Path(data_path)
     if not data_path.exists():
         raise FileNotFoundError(f"Data file not found at {data_path}")
-        
-    file_extension = data_path.suffix.lower() # Get file extension (.json, .csv...)
+
+    file_extension = data_path.suffix.lower()
     
     try:
-        # Handle different file formats
-        if file_extension == '.json':
-            # Load standard JSON file
-            with open(data_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+        data = []
+        with open(data_path, 'r', encoding='utf-8') as f:
+            # Handle different file formats
+            if file_extension == '.json':
+                data = json.load(f)[start_idx:end_idx]
                 
-        elif file_extension == '.jsonl':
-            # Load JSON Lines file (one JSON object per line)
-            data = []
-            with open(data_path, 'r', encoding='utf-8') as f:
-                for line in f:
-                    if line.strip():
+            elif file_extension == '.jsonl':
+                for i, line in enumerate(f):
+                    if start_idx <= i < end_idx and line.strip():
                         data.append(json.loads(line))
                         
-        elif file_extension == '.csv':
-            # Load CSV file with specific columns
-            data = []
-            with open(data_path, 'r', encoding='utf-8') as f:
+            elif file_extension == '.csv':
                 reader = csv.DictReader(f)
-                for row in reader:
-                    if 'input_text' not in row or 'target_text' not in row:
-                        raise ValueError("CSV must contain 'input_text' and 'target_text' columns")
-                    data.append({
-                        'input_text': row['input_text'],
-                        'target_text': row['target_text']
-                    })
+                for i, row in enumerate(reader):
+                    if start_idx <= i < end_idx:
+                        if 'input_text' not in row or 'target_text' not in row:
+                            raise ValueError("CSV must contain 'input_text' and 'target_text' columns")
+                        data.append({
+                            'input_text': row['input_text'],
+                            'target_text': row['target_text']
+                        })
                     
-        elif file_extension == '.txt':
-            # Load custom format text file with INPUT: and TARGET: prefixes
-            data = []
-            current_item = {}
-            with open(data_path, 'r', encoding='utf-8') as f:
+            elif file_extension == '.txt':
                 lines = f.readlines()
-                
-            for line in lines:
-                line = line.strip()
-                if line.startswith('INPUT:'):
-                    if current_item:
-                        data.append(current_item)
-                    current_item = {'input_text': line[6:].strip()}
-                elif line.startswith('TARGET:'):
-                    if 'input_text' in current_item:
-                        current_item['target_text'] = line[7:].strip()
-                        data.append(current_item)
-                        current_item = {}
+                for idx in range(start_idx, min(end_idx, len(lines)), 2):
+                    if idx + 1 >= len(lines):
+                        break
                         
-            # Add last item if complete
-            if current_item and 'input_text' in current_item and 'target_text' in current_item:
-                data.append(current_item)
-                
-        else:
-            raise ValueError(f"Unsupported file format: {file_extension}")
+                    input_line = lines[idx].strip()
+                    target_line = lines[idx + 1].strip()
+                    
+                    if input_line.startswith('INPUT:') and target_line.startswith('TARGET:'):
+                        data.append({
+                            'input_text': input_line[6:].strip(),
+                            'target_text': target_line[7:].strip()
+                        })
             
-        for item in data:
-            if not isinstance(item, dict) or 'input_text' not in item or 'target_text' not in item:
-                raise ValueError("Data must contain 'input_text' and 'target_text' fields")
-                
-        if max_samples is not None:
-            data = data[:max_samples]
+            else:
+                raise ValueError(f"Unsupported file format: {file_extension}")
+        if not data: #There was no data found
+            raise ValueError("No valid data found in the specified range. Please check your dataset or specified indices")
             
+        # Validate data structure
+        if not all(isinstance(item, dict) and 'input_text' in item and 'target_text' in item for item in data):
+            raise ValueError("Data must contain 'input_text' and 'target_text' fields")
         return data
         
     except Exception as e:

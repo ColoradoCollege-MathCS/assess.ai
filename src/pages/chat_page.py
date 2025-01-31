@@ -9,11 +9,15 @@ from components import (
     LoadingIndicator
 )
 
+from utils.chat_history import SecureChatHistory
+from utils.chat import ChatBot
+
 class ChatPage:
-    def __init__(self, root, chat_history, chatbot):
+    def __init__(self, root):
+    
         self.root = root
-        self.chat_history = chat_history
-        self.chatbot = chatbot
+        self.chat_history = SecureChatHistory()
+        self.chatbot = ChatBot()
         self.is_processing = False
         
         # Create main container for chat page
@@ -23,28 +27,25 @@ class ChatPage:
         self.setup_screen()
         
     def setup_screen(self):
-        """Initialize and setup the chat screen"""
         self._configure_root()
         self._setup_styles()
         self._configure_grid()
         self._initialize_components()
         self._setup_bindings()
         # Load chat history after GUI is ready (100ms delay)
+        threading.Thread(target=self.chatbot._load_model, daemon=True).start()
         self.root.after(100, self.load_chat_history)
         
     def _configure_root(self):
-        """Configure root window settings"""
         self.root.title("Assess.ai")
         self.root.configure(bg="#D2E9FC")
         
     def _setup_styles(self):
-        """Setup ttk styles"""
         style = ttk.Style()
         style.configure("Chat.TFrame", background="#D2E9FC")
         style.configure("Round.TLabel", background="#D2E9FC")
             
     def _configure_grid(self):
-        """Configure grid layout"""
         self.container.grid_rowconfigure(0, weight=0)  # Title
         self.container.grid_rowconfigure(1, weight=1)  # Chat
         self.container.grid_rowconfigure(2, weight=0)  # Input
@@ -70,12 +71,10 @@ class ChatPage:
         self.root.bind('<Escape>', lambda e: self.root.destroy())
         
     def set_processing_state(self, is_processing):
-        """Update processing state and input frame state"""
         self.is_processing = is_processing
         self.root.after(0, self._update_input_state)
         
     def _update_input_state(self):
-        """Update input frame enabled/disabled state"""
         if hasattr(self.input_frame, 'input_field'):
             self.input_frame.input_field.configure(state='disabled' if self.is_processing else 'normal')
         if hasattr(self.input_frame, 'send_button'):
@@ -98,8 +97,7 @@ class ChatPage:
             
         except Exception as e:
             print(f"Error sending message: {str(e)}")
-            self.add_message(f"Error: {str(e)}", is_user=False)
-            self.set_processing_state(False)
+            self.set_processing_state(True)
         
     def _get_ai_response_threaded(self, user_input, scroll_position):
         def get_response():
@@ -157,3 +155,51 @@ class ChatPage:
             print(f"Error loading chat history: {str(e)}")
         
         self.root.after(50, lambda: self.chat_area.canvas.yview_moveto(5.0))
+    
+    
+"""
+We use threading in this app to keep app responsive while the LLM response is being returned. 
+Before without threading, the app would pause and not be responsive until the LLM response comes. 
+By using threading we allow the UI to work while doing other tasks. 
+
+2 threads: Main Thread (UI), AI Response threads (Created when needing to get response).
+
+# THREAD FLOW DIAGRAM
+#
+# Main UI Thread                    AI Response Thread
+# (tkinter)                        (spawned as needed)
+# ================                 ==================
+#      |                                  |
+#      |                                  |
+# User types...                          |
+#      |                                  |
+# [Send clicked]                         |
+#      |                                  |
+# send_message()                         |
+#   |                                    |
+#   |---> Add user message              |
+#   |     to chat                       |
+#   |                                    |
+#   |---> Start AI Thread ------------->|
+#      |                                  |
+#      |                         [Process AI response]
+# [UI remains                            |
+#  responsive]                   [AI response ready]
+#      |                                  |
+#      |<---------------------------------|
+#      |                    root.after()  |
+# [Show AI reply]           (schedule UI  |
+#      |                    update)       |
+#      |                                  |
+#
+# Notes:
+# - Main UI Thread: Never blocks, handles all UI updates
+# - AI Thread: Created for each response, dies after completion
+# 
+# Key Points:
+# 1. UI never freezes because heavy processing is offloaded
+# 2. Direct message handling without queues
+# 3. root.after() safely schedules UI updates from other threads
+# 4. Due to GIL, only one Python thread runs at a time
+#    (but switches fast enough to appear concurrent)
+"""

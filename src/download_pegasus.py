@@ -24,7 +24,4 @@ Model Details:
 ├── spiece.model            (The tokenizer's vocabulary and rules, Defines how to split text into tokens)
 └── tokenizer_config.json    (Configuration for the tokenizer's behavior)
 
-
-
-
 """
