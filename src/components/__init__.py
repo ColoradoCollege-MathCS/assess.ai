@@ -5,3 +5,5 @@ from components.input_frame import InputFrame
 from components.chat_area import ChatArea
 from components.loading_indicator import LoadingIndicator
 from components.llm_input import LLMInput
+from components.evaluation_form import EvaluationForm
+from components.form import Form

@@ -9,8 +9,9 @@ https://github.com/user-attachments/assets/82a473e8-4ae2-4352-b59b-a112da76b475
 
 ## Features
 - Text Summarization with Pegasus LLM
-- Chat history storage (Currently not encrypted)
-- 
+- Chat history storage 
+- Finetune models 
+- Model Evaluation
 ## Installation
 
 1. Clone this repository:
@@ -29,7 +30,7 @@ pip install -r requirements.txt
 1. Download the required model first (this is required before first run):
 ```bash
 cd src
-python download_model.py
+python download_pegasus.py
 ```
 
 2. Start the application:

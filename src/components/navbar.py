@@ -15,10 +15,11 @@ nav_items = [
 class Navbar(tk.Frame):
     def __init__(self, parent, show_page_callback, **kwargs):
         super().__init__(parent, bg="#FFFFFF", **kwargs)
+        # Set callback function
         self.show_page_callback = show_page_callback
         self.current_page = "chat"  # Default page
         self.buttons = {}  # Store button references
-        self.logo_photo = None  # Keep reference to prevent garbage collection
+        self.logo_photo = None  
         self._setup_navbar()
         
     def _setup_navbar(self):
