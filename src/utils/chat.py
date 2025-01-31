@@ -1,13 +1,65 @@
 from transformers import PegasusForConditionalGeneration, PegasusTokenizer
 import torch
 from pathlib import Path
+import json
+import threading
+from datetime import datetime
 
 class ChatBot:
     def __init__(self):
         self.tokenizer = None
         self.model = None
         self.device = None
-        self.model_path = Path(__file__).parent / "../../model_files/pegasus" 
+        self.model_path = Path(__file__).parent / "../../model_files/pegasus"
+        self.chat_history_path = Path("../chat_data/chat_history.txt")
+        self._ensure_chat_directories()
+
+    def _ensure_chat_directories(self):
+        # Checks if chat history already exists. If it doesn't it creates one.
+        self.chat_history_path.parent.mkdir(exist_ok=True)
+        if not self.chat_history_path.exists():
+            self.chat_history_path.write_text("")
+
+    def _save_chat_entry(self, entry_data):
+        # Save chat history in the background
+        try:
+            entry = {
+                'timestamp': datetime.now().isoformat(),
+                'data': entry_data,
+                'type': 'chat_entry'
+            }
+            
+            # Write to file in background
+            def write_to_file():
+                try:
+                    with open(self.chat_history_path, 'a', encoding='utf-8') as f:
+                        f.write(json.dumps(entry) + '\n')
+                except Exception as e:
+                    print(f"Failed to write chat entry: {str(e)}")
+            
+            threading.Thread(target=write_to_file, daemon=True).start()
+                
+        except Exception as e:
+            print(f"Failed to save chat entry: {str(e)}")
+
+    def load_chat_history(self, limit=None):
+        entries = []
+        try:
+            with open(self.chat_history_path, 'r', 
+                     encoding='utf-8') as f:
+                for line in f:
+                    if line.strip():
+                        try:
+                            entry = json.loads(line.strip())
+                            if entry['type'] == 'chat_entry':
+                                entries.append(entry)
+                        except json.JSONDecodeError:
+                            continue
+                                
+            return entries
+        except Exception as e:
+            print(f"Failed to load chat history: {str(e)}")
+            return []
 
     def _load_model(self):
         if self.model is None:
@@ -17,8 +69,6 @@ class ChatBot:
             self.model = self.model.to(self.device)
 
     def get_response(self, user_input):
-        if not user_input.strip():
-            return "Please enter a message."
             
         try:
             if self.model is None:
@@ -67,9 +117,16 @@ class ChatBot:
             if not full_response:
                 return "I apologize, but I couldn't generate a proper response. Please try rephrasing your input."
 
-            return " ".join(full_response)
+            response = " ".join(full_response)
+            
+            # Save the chat entry after successful response generation
+            self._save_chat_entry({
+                'user_input': user_input,
+                'ai_response': response
+            })
+            
+            return response
 
         except Exception as e:
             print(f"Error in get_response: {str(e)}")
             return f"An error occurred: {str(e)}"
-            
