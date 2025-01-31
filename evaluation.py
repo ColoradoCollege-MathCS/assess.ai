@@ -10,25 +10,19 @@ from bert_score import BERTScorer
 from nltk.translate.meteor_score import meteor_score
 from evaluate import load
 from summarizer import generate_summary
+#from deepeval.metrics import GEval
+#from deepeval.test_case import LLMTestCaseParams
 from tqdm import tqdm
 
 
 
+def load_summaries(original_abstracts, generated_summaries):
+    with open(original_abstracts, 'r', encoding='utf-8') as f:
+         original_summaries = f.readlines()
+    with open(generated_summaries, 'r', encoding='utf-8') as f:
+         generated_summaries = f.readlines()
 
-#preprocess data
-#DATASETS shold be structured in a way that makes it easy to pair w ref texts. AKA
-#CSV format/ JSOMN format
-#clean and tokenize the reference and generated text in consisten manner
-#nltk.word_tokenizer()
-
-#for BLEU - one word- level tokenization - nltk.word_tokenize
-#for ROUGE- sentence level tokenizatiomn and use libraries like rouge-score
-
-#THIS WORKs BEST FOR ENGLISH LANGUAGES
-#test originl version
-#test
-
-def load_text_from_file(filename):
+    return original_summaries, generated_summaries
     
 #HELP
 
@@ -52,10 +46,12 @@ def bleu_calculator(reference, candidate):
     print(f"BLEU score: {bleu_results:.4f}")
     return bleu_results
 
-#def meteor_calculator(reference, candidate):
-  #  score = meteor_score([reference], candidate)
-  #  print(f"METEOR Score: {score}")
-  #  return score
+#GROSS def meteor_calculator(reference, candidate):
+
+	# uses nlkt translator
+	#score = meteor_score([reference], candidate)
+	#print(f"METEOR Score: {score}")
+	#return score
 
 def BERTScore_calculator(reference, candidate):
     #bertscore = load("bertscore")
@@ -67,39 +63,72 @@ def BERTScore_calculator(reference, candidate):
     print(f"BERTScore Precision: {P.mean():.4f}, Recall: {R.mean():.4f}, F1: {F1.mean():.4f}")
     return P, R, F1
 
-#def METEOR_calculator(reference, candidate):
-   # score = meteor_score([reference], candidate)
-   # print(f"METEOR SCORE: {score:.4f}")
-   # return score
 
-def evaluate_summaries():
+#def gEVAL_calculator(reference,candidate):
+
+#pip instal deepeval
+
+   # correctness_metric = GEval(
+    #    name="Accurateness",
+    #    criteria="Determine whether the candidate summary is accurate compared to the reference summary.",
+        # NOTE: you can only provide either criteria or evaluation_steps, and not both
+    
+      #  evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT, LLMTestCaseParams.TARGET],
+ #   )
+    
+
+    
+
+def evaluate_summaries(original_file, generated_file):
+      # open the file data.txt; if there is no file, create one
+    # append
+    data_file = open("data.txt","a")
     try:
-#HELP
-        
-              print("Calculating ROUGE scores:")
-              rouge_data = rouge_calculator(original, generated)
-              rouge_scores.append(rouge_data)
-              print("Calculating BLEU score:")
-              bleu_score = bleu_calculator(original, generated)
-              bleu_scores.append(bleu_score)
-              print("Calculating BERTScore scores:")
-              BERTScore_results = BERTScore_calculator(original, generated)
-              BEERTScore_scores.append(BERTScore_result)
+              
+              original_summaries,  generated_summaries = load_summaries(original_file, generated_file)
+              
+              #initialize
+              rouge_scores = []
+              bleu_scores = []
+              BERTScore_scores = []
 
-        #save evaluation result to a file
-               # Write to file in background
-            def write_to_file():
+              for original, generated in zip(original_summaries, generated_summaries):
+                   original = original.strip()
+                   generated = generated.strip()
+                   # writes files as the stuff is calculated
+                   print("Calculating ROUGE scores:")
+                   rouge_data = rouge_calculator(original, generated)
+                   rouge_scores.append(rouge_data)
+                   str_rg = str(rouge_data)
+                   data_file.write("Rouge:" + str_rg + "\n")
 
-        #save to file
-      except Exception as e:
-            print(f"Failed to evaluate")
+                   print("Calculating BLEU score:")
+                   bleu_score = bleu_calculator(original, generated)
+                   bleu_scores.append(bleu_score)
+                   str_bl = str(bleu_score)
+                   data_file.write("BLEU:" + str_bl + "\n")
+
+                   print("Calculating BERTScore scores:")
+                   BERTScore_results = BERTScore_calculator(original, generated)
+                   BERTScore_scores.append(BERTScore_results)
+                   str_bt = str(BERTScore_results)
+                   data_file.write("BERT:" + str_bt + "\n")
+
+    except Exception as e:
+              print(f"Failed to evaluate")
+
+      # always close your files!!
+    data_file.close()
             
 
 
 
+def main():
+    original_file = 'original_abstracts.txt'
+    summarized_file = 'pegasus_summaries.txt'
 
 
-
+    evaluate_summaries(original_file, summarized_file)
 
 
 
