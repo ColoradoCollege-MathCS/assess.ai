@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from pathlib import Path
 import threading
 from utils.fine_tuning import FineTuner
 from components.finetune_form import FinetuneForm
@@ -34,21 +33,19 @@ class FinetunePage:
         # Initialize the form component
         self.form = FinetuneForm(content, self.handle_start_finetuning)
         
-    def run_finetuning(self, config, dataset_path):
-        """Execute fine-tuning process"""
-        try:
-            # Check for model directory
-            model_path = Path("../model_files/pegasus")
-            if not model_path.exists():
-                raise FileNotFoundError(f"Model directory not found at {model_path}")
-                
+    def run_finetuning(self, config, dataset_path, model_path, start_idx, end_idx):
+        try:         
             # Initialize fine-tuning process
             self.form.update_status("Loading model...")
             fine_tuner = FineTuner(model_path, config)
             
             # Load dataset
-            self.form.update_status("Loading dataset...")
-            train_data = fine_tuner.load_dataset(dataset_path)
+            self.form.update_status(f"Loading dataset")
+            try:
+                train_data = fine_tuner.load_dataset(dataset_path,start_idx,end_idx)
+                self.form.update_status(f"Successfully loaded {len(train_data)} samples from index range {start_idx}-{end_idx}")
+            except ValueError as e:
+                raise ValueError(f"Failed to load dataset: {str(e)}")
             
             self.form.update_status("Starting fine-tuning...")
             
@@ -64,13 +61,13 @@ class FinetunePage:
                 status_text = f"Epoch {epoch}/{total_epochs} - Batch {batch}/{total_batches} - Loss: {loss:.4f}"
                 self.root.after(0, lambda: self.form.update_status(status_text))
             
-            output_dir = fine_tuner.fine_tune(
+            output_directory = fine_tuner.fine_tune(
                 train_data,
                 progress_callback=progress_callback
             )
             
             # Update status on completion
-            self.root.after(0, lambda: self.form.update_status(f"Fine-tuning complete! Model saved to: {output_dir}"))
+            self.root.after(0, lambda: self.form.update_status(f"Fine-tuning complete! Model saved to: {output_directory}"))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
         except Exception as e:
@@ -78,12 +75,11 @@ class FinetunePage:
             self.root.after(0, lambda: self.form.update_status(f"Error: {str(e)}", is_error=True))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
-    def handle_start_finetuning(self, config, dataset_path):
-        """Handle the start of fine-tuning process"""
+    def handle_start_finetuning(self, config, dataset_path, model_path, start_idx, end_idx):
         # Start fine-tuning in a separate thread
         thread = threading.Thread(
             target=self.run_finetuning,
-            args=(config, dataset_path),
+            args=(config, dataset_path, model_path, start_idx, end_idx),
             daemon=True
         )
         thread.start()

@@ -1,6 +1,5 @@
 from transformers import PegasusForConditionalGeneration, PegasusTokenizer
 import torch
-import os
 from pathlib import Path
 
 class ChatBot:
@@ -45,6 +44,7 @@ class ChatBot:
                 inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
                 try:
+                    # Don't track gradients when chatting to not affect model.
                     with torch.no_grad():
                         output_ids = self.model.generate(
                             **inputs,
