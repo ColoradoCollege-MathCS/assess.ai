@@ -1,5 +1,14 @@
 # Changelog
 
+## 1-31
+- Added Evaluation
+- Added Evaluation via GUI
+- Refactored form, main.py
+
+## 1-30
+- Added Finetuning
+- Added Finetuning via GUI
+
 ## 01-28
 
 ### Added
