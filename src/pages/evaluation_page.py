@@ -8,7 +8,6 @@ from components.evaluation_form import EvaluationForm
 class EvaluationPage:
     def __init__(self, root):
         self.root = root
-        # Run method right below 
         self.setup_page()
         
     def setup_page(self):
@@ -37,6 +36,10 @@ class EvaluationPage:
             self.form.update_status("Loading model...")
             evaluator = Evaluator(model_path)
             
+            # Setup plot in the form
+            evaluator.setup_plot(self.form.form)
+            self.form.evaluator = evaluator
+            
             # Load dataset with specified range
             self.form.update_status(f"Loading dataset (indices {start_idx}-{end_idx})...")
             try:
@@ -62,6 +65,9 @@ class EvaluationPage:
                     f"Current ROUGE-1: {rouge1:.4f}\n"
                 )
                 self.root.after(0, lambda: self.form.update_status(status_text))
+                
+                # Update plot
+                self.root.after(0, lambda: evaluator.update_plot(current, rouge1))
             
             # Run evaluation
             final_scores = evaluator.evaluate(
@@ -87,7 +93,6 @@ class EvaluationPage:
         # Start evaluation in a separate thread
         thread = threading.Thread(
             target=self.run_evaluation,
-            # Passes parameters needed to run evaluation
             args=(dataset_path, model_path, start_idx, end_idx),
             daemon=True
         )

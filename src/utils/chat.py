@@ -1,4 +1,4 @@
-from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 import torch
 from pathlib import Path
 import json
@@ -10,13 +10,14 @@ class ChatBot:
         self.tokenizer = None
         self.model = None
         self.device = None
-        self.model_path = Path(__file__).parent / "../../model_files/pegasus"
-        self.chat_history_path = Path("../chat_data/chat_history.txt")
+        base_path = Path(__file__).parent
+        self.model_path = base_path / "../../model_files/pegasus"
+        self.chat_history_path = base_path / "../chat_data/pegasus/chat_history.txt"
         self._ensure_chat_directories()
 
     def _ensure_chat_directories(self):
-        # Checks if chat history already exists. If it doesn't it creates one.
-        self.chat_history_path.parent.mkdir(exist_ok=True)
+        # Create all parent directories if they don't exist
+        self.chat_history_path.parent.mkdir(parents=True, exist_ok=True)
         if not self.chat_history_path.exists():
             self.chat_history_path.write_text("")
 
@@ -63,8 +64,12 @@ class ChatBot:
 
     def _load_model(self):
         if self.model is None:
-            self.tokenizer = PegasusTokenizer.from_pretrained(self.model_path)
-            self.model = PegasusForConditionalGeneration.from_pretrained(self.model_path)
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(
+                self.model_path,
+                low_cpu_mem_usage=True
+            )
+            self.model.to(self.device)
             self.device = torch.device('cpu')
             self.model = self.model.to(self.device)
 
