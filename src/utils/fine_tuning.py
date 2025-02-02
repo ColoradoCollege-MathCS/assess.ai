@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
-from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 import json
 from pathlib import Path
 from datetime import datetime
@@ -36,8 +36,8 @@ class FineTuner:
         self.config = json.loads(config_str)['training']
         
         # Load pre-trained model and tokenizer
-        self.tokenizer = PegasusTokenizer.from_pretrained(self.model_path)
-        self.model = PegasusForConditionalGeneration.from_pretrained(
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(
             self.model_path,
             low_cpu_mem_usage=True
         )
