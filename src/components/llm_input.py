@@ -45,8 +45,8 @@ class LLMInput(tk.Frame):
         self.input_text.bind("<FocusIn>", self.default)
         self.input_text.bind("<FocusOut>", self.default)
 
-        # "Upload" button canvas
-        self.upload_button = tk.Canvas(
+        # "Download" button canvas
+        self.download_button = tk.Canvas(
             self.container,
             width=100,
             height=60,
@@ -54,21 +54,21 @@ class LLMInput(tk.Frame):
             highlightthickness=0,
             cursor="hand2"
         )
-        self.upload_button.grid(row=1, column=0)
+        self.download_button.grid(row=1, column=0)
 
-        # Draw upload button
+        # Draw download button
         padding = 10
-        self.rectangle = self.upload_button.create_rectangle(
+        self.rectangle = self.download_button.create_rectangle(
             padding, padding,
             100, 50,
             fill="#0A84FF",
             outline=""
         )
 
-        # Draw "Upload LLM" on upload button
-        self.upload_llm = self.upload_button.create_text(
+        # Draw "Download LLM" on download button
+        self.download_llm = self.download_button.create_text(
             55, 30,
-            text="Upload LLM",
+            text="Download",
             fill="white",
             font=("SF Pro Text", 15),
             anchor="center"
@@ -89,7 +89,7 @@ class LLMInput(tk.Frame):
         #self.output_text.pack(fill="both", expand=True, padx=20, pady=2)
         self.output_text.grid(row=0, column=0, sticky="ew", padx=20, pady=2)
 
-        self.upload_button.bind("<Button-1>", self.handle_upload)
+        self.download_button.bind("<Button-1>", self.handle_download)
 
     def default(self, event):
         current = self.input_text.get("1.0", tk.END)
@@ -98,7 +98,7 @@ class LLMInput(tk.Frame):
         elif current == "\n":
             self.input_text.insert("1.0", "Type in model path here")
 
-    def handle_upload(self, event = None):
+    def handle_download(self, event = None):
         model_path = self.get_input()
         print ("Clicked!")
         if model_path:

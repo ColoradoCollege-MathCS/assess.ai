@@ -1,5 +1,8 @@
+import sys
 import tkinter as tk
+import io
 from tkinter import ttk
+from subprocess import run
 from utils.llm import LLM
 from components import (
     LLMInput,
@@ -9,9 +12,11 @@ from components import (
 
 class LLMsPage:
     def __init__(self, root):
+        self.LLM = None
         self.root = root
         self.container = tk.Frame(self.root, bg="#D2E9FC")
         self.container.grid(row=1, column=1, sticky="nsew")
+        self.term_output = ""
 
         self.setup_page()
 
@@ -24,14 +29,6 @@ class LLMsPage:
         self._initialize_components()
         self._setup_bindings()
 
-        """ Placeholder content
-        tk.Label(
-            self.container,
-            text="LLMs",
-            font=("SF Pro Display", 24, "bold"),
-            bg="#D2E9FC"
-        ).pack(pady=20)
-        """
     def _configure_root(self):
         """Configure root window settings"""
         self.root.title("Assess.ai")
@@ -56,7 +53,6 @@ class LLMsPage:
         self.LLMInput = LLMInput(self.container, self.send_path)
         self.LLMInput.grid(row=1, column=0, sticky="ew", padx=20, pady=(0, 5))
 
-
     def _setup_bindings(self):
         self.root.bind('<Escape>', lambda e: self.root.destroy())
 
@@ -67,36 +63,63 @@ class LLMsPage:
 
         # if message not empty
         self.disable_input(True) # disable text input
-        self.LLMInput.output_text.configure(state="normal")
+        self.disable_output(False)
         self.LLMInput.output_text.delete("1.0", tk.END)
-        #self.LLMInput.output_text.configure(state="disable")
 
         # connect to indicated LLM in Hugging Face
         try:
-            self.LLM = LLM(model_path)
-        except OSError as e:
-            #self.LLMInput.output_text.configure(state="normal")
-            self.LLMInput.output_text.insert("1.0", "Unsuccessful. Try again.")
-            self.LLMInput.output_text.configure(state="disable")
+            self.get_output(model_path)
+            self.LLM.download_LLM() # download model to file in directory
+            output = self.get_output(model_path) # get output from Hugging Face
+            self.LLMInput.output_text.insert("1.0", model_path + " was successfully downloaded! \n " + output)
+
+            self.disable_output(True)
+            self.disable_input(False)
+
+        except Exception as e:
+            self.LLMInput.output_text.insert("1.0", model_path + " could not be downloaded. Try again.")
+            self.disable_output(True)
             self.disable_input(False)
             print(f"Error handling LLM: {str(e)}")
 
-        else:
-            #self.LLMInput.output_text.configure(state="normal")
-            self.LLMInput.output_text.insert("1.0", "Successful!")
-            self.LLMInput.output_text.configure(state="disable")
-            self.disable_input(False)
-            # if successfully connected, save in LLM.txt
-
     def disable_input(self, disable):
-        self.disable = disable
-        if disable == True:
+        if disable:
             self.LLMInput.input_text.configure(state="disable")
-            self.LLMInput.upload_button.configure(state="disable")
+            self.LLMInput.download_button.configure(state="disable")
         else:
             self.LLMInput.input_text.configure(state="normal")
-            self.LLMInput.upload_button.configure(state="normal")
+            self.LLMInput.download_button.configure(state="normal")
+
+    def disable_output(self, disable):
+        if disable:
+            self.LLMInput.output_text.configure(state="disable")
+        else:
+            self.LLMInput.output_text.configure(state="normal")
+
+    ### revisit this for later iterations
+    def get_output(self, model_path):
+        buffer = io.StringIO()
+        sys.stdout = buffer
+        sys.sterr = buffer
+
+        try:
+            self.LLM = LLM(model_path) # create LLM
+            self.term_output = buffer.getvalue()
+        except Exception as e:
+            self.term_output = f"Error: {str(e)}"
+
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        return self.term_output
 
 
 
-    
+
+
+
+
+
+
+
+
+
