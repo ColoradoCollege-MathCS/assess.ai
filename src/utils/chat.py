@@ -10,6 +10,8 @@ class ChatBot:
         self.device = None
         #self.model_path = Path(__file__).parent / "../model_files"
         self.model_path = "google/pegasus-xsum"
+
+
     def _load_model(self):
         if self.model is None:
             self.tokenizer = PegasusTokenizer.from_pretrained(self.model_path)

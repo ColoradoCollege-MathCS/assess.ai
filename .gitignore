@@ -7,3 +7,4 @@ medscribe_env/
 **/.DS_Store
 chat_data/
 .env/
+finetunedmodels/

@@ -5,7 +5,7 @@ from pathlib import Path
 
 class SecureChatHistory:
     def __init__(self):
-        self.chat_history_path = Path("chat_data/chat_history.txt")
+        self.chat_history_path = Path("../chat_data/chat_history.txt")
         self._ensure_directories()
 
     def _ensure_directories(self):
