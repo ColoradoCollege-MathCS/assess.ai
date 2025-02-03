@@ -10,10 +10,16 @@ from bert_score import BERTScorer
 from nltk.translate.meteor_score import meteor_score
 from evaluate import load
 from summarizer import generate_summary
-#from deepeval.metrics import GEval
-#from deepeval.test_case import LLMTestCaseParams
 from tqdm import tqdm
+from openai import OpenAI
+from deepeval.netrics import GEval
+from deepeval.test_case import LLMTestCase
+from deepeval.test_case import LLMTestCaseParams
 
+
+openai_api_key_here = ""
+# REMEMBER TO DELETE THE KEY WHEN PUSHING TO GITHUB
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", openai_api_key_here))
 
 
 def load_summaries(original_abstracts, generated_summaries):
@@ -30,7 +36,6 @@ def load_summaries(original_abstracts, generated_summaries):
     
 
 def rouge_calculator(reference, candidate): #caulculates rouge metric
-    
 #rouge = evaluate.load('rouge') #load metric
     scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
     rouge_data = scorer.score(reference, candidate)
@@ -49,13 +54,11 @@ def bleu_calculator(reference, candidate):
     print(f"BLEU score: {bleu_results:.4f}")
     return bleu_results
 
-def meteor_calculator(reference, candidate):
-
+#def meteor_calculator(reference, candidate):
 	# uses nlkt translator
-	score = meteor_score([reference], candidate)
-	print(f"METEOR Score: {score}")
-	return score
-
+	#score = meteor_score([reference], candidate)
+	#print(f"METEOR Score: {score}")
+	#
 def BERTScore_calculator(reference, candidate):
     #bertscore = load("bertscore")
    # scores = bertscore.compute(reference, candidate, lang="en")
@@ -63,10 +66,29 @@ def BERTScore_calculator(reference, candidate):
    # BERTScore calculation
     scorer = BERTScorer(model_type='bert-base-uncased')
     P, R, F1 = scorer.score([candidate], [reference])
-    print(f"BERTScore Precision: {P.mean():.4f}, Recall: {R.mean():.4f}, F1: {F1.mean():.4f}")
-    return P, R, F1
+    precision = P.mean().item()
+    recall = R.mean().item()
+    f1_score = F1.mean().item()
+    print(f"BERTScore Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1_score:.4f}")
+    return precision, recall, f1_score
 
     #GEVAL
+
+def GEVAL_calculator(reference, candidate):
+	correctness_metric = GEval(
+		name="Correctness",
+		criteria="Determine whether the actual output is factually correct based on the expected output.",
+		evaluation_steps=[
+			"Check whether the facts in 'actual output' contradicts any facts in 'expected output",
+			"You should also heavily penalize omission of detail",
+			"Vague language, or contradicting OPINIONS, are ok"
+		],
+		evaluation_params=[LLMTestCaseParams.INPUT,LLMTestCaseParams.ACTUAL_OUTPUT,LLMTestCaseParams.EXPECTED_OUTPUT],
+	)
+	test_case = LLMTestCase(reference, candidate, reference)
+
+	correctness_metric.measure(test_case)
+	return(correctness_metric.score)
 
 
 
@@ -84,7 +106,8 @@ def evaluate_summaries(original_file, generated_file):
               BERTScore_scores = []
               #original = original.strip()
               #generated = generated.strip()
-             
+    
+              data_file.write("Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0." + "\n")
               # writes files as the stuff is calculated
               print("Calculating ROUGE scores for generated summary:")
               rouge_data = rouge_calculator(original, generated)
@@ -104,18 +127,17 @@ def evaluate_summaries(original_file, generated_file):
               str_bt = str(BERTScore_results)
               data_file.write("BERTScore results:" + str_bt + "\n")
 
-              print("Calculating METEOR scores for generated summary :")
-              METEOR_results = meteor_calculator(original, generated)
-              METEOR_results.append(BERTScore_results)
-              str_bt = str(METEOR_results)
-              data_file.write("METEOR results:" + str_bt + "\n")
-
-                #FILL THIS IN W GEVAL IMPLEMENTATIOM
-              #print("Calculating GEVAL for generated summary :")
+             # print("Calculating METEOR scores for generated summary :")
              # METEOR_results = meteor_calculator(original, generated)
-              #METEOR_results.append(BERTScore_results)
-              #str_bt = str(METEOR_results)
-             # data_file.write("METEOR results:" + str_bt + "\n")
+             # METEOR_scores.append(METEOR_results)
+             # str_mt = str(METEOR_results)
+              #data_file.write("METEOR results for generated summary:" + str_mt + "\n")
+
+              print("Calculating GEval score for generated summary :")
+              GEval_results = GEVAL_calculator(original, generated)
+              geval_scores.append(GEval_results)
+              str_ge = str(GEval_results)
+              data_file.write("GEval results for generated summary:" + str_ge + "\n")
 
     
     except Exception as e:
