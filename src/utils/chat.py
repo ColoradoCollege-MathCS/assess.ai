@@ -10,16 +10,50 @@ class ChatBot:
         self.tokenizer = None
         self.model = None
         self.device = None
+        self.current_model = None
         base_path = Path(__file__).parent
-        self.model_path = base_path / "../../model_files/pegasus"
-        self.chat_history_path = base_path / "../chat_data/pegasus/chat_history.txt"
-        self._ensure_chat_directories()
+        self.model_files_path = base_path / "../../model_files"
+        self.chat_history_path = None
+        self._ensure_model_directories()
+
+
+    # parents=True makes the necessary parent directories before mmaking subdirectories exist_ok=True doesn't throw an error if the folder exists, 
+    def _ensure_model_directories(self):
+        if not self.model_files_path.exists():
+            self.model_files_path.mkdir(parents=True, exist_ok=True)
 
     def _ensure_chat_directories(self):
-        # Create all parent directories if they don't exist
-        self.chat_history_path.parent.mkdir(parents=True, exist_ok=True)
-        if not self.chat_history_path.exists():
-            self.chat_history_path.write_text("")
+        if self.chat_history_path:
+            self.chat_history_path.parent.mkdir(parents=True, exist_ok=True)
+            if not self.chat_history_path.exists():
+                self.chat_history_path.write_text("")
+
+    def get_available_models(self):
+        if not self.model_files_path.exists():
+            return []
+        # Iterate through all directories in model_files
+        return [d.name for d in self.model_files_path.iterdir() if d.is_dir()]
+
+    def set_model(self, model_name):
+        try:
+            self.current_model = model_name
+            self.model_path = self.model_files_path / model_name
+            self.chat_history_path = Path(__file__).parent / f"../../chat_data/{model_name}/chat_history.txt"
+            # Check or create the chat history if it doesn't exist
+            self._ensure_chat_directories()
+            
+            # Set new model
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(
+                self.model_path,
+                low_cpu_mem_usage=True
+            )
+            self.device = torch.device('cpu')
+            self.model = self.model.to(self.device)
+            return True
+            
+        except Exception as e:
+            raise ValueError(f"Failed to set model {model_name}: {str(e)}")
 
     def _save_chat_entry(self, entry_data):
         # Save chat history in the background
@@ -44,10 +78,12 @@ class ChatBot:
             print(f"Failed to save chat entry: {str(e)}")
 
     def load_chat_history(self, limit=None):
+        if not self.chat_history_path:
+            return []
+            
         entries = []
         try:
-            with open(self.chat_history_path, 'r', 
-                     encoding='utf-8') as f:
+            with open(self.chat_history_path, 'r', encoding='utf-8') as f:
                 for line in f:
                     if line.strip():
                         try:
@@ -61,23 +97,13 @@ class ChatBot:
         except Exception as e:
             print(f"Failed to load chat history: {str(e)}")
             return []
-
-    def _load_model(self):
-        if self.model is None:
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_path,
-                low_cpu_mem_usage=True
-            )
-            self.model.to(self.device)
-            self.device = torch.device('cpu')
-            self.model = self.model.to(self.device)
+            
 
     def get_response(self, user_input):
+        if not self.current_model:
+            raise ValueError("No model selected. Please select a model first.")
             
         try:
-            if self.model is None:
-                self._load_model()
 
             # Process input in smaller chunks if needed
             max_length = 1024

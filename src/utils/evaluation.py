@@ -71,16 +71,6 @@ class Evaluator:
 
         self.ax.xaxis.set_major_locator(plt.MultipleLocator(base=1.0))
         
-        # Add moving average after 5 samples
-        if len(self.rouge_scores) > 5:
-            window_size = min(5, len(self.rouge_scores))
-            rolling_mean = [
-                sum(self.rouge_scores[max(0, i-window_size):i])/min(i, window_size) 
-                for i in range(1, len(self.rouge_scores)+1)
-            ]
-            self.ax.plot(self.sample_indices, rolling_mean, 'r--', 
-                        label='5-sample Moving Average', alpha=0.7)
-        
         # Reset plot styling
         self.ax.set_title('ROUGE-1 Scores Over Time')
         self.ax.set_xlabel('Sample Number')
