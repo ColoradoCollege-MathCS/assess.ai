@@ -29,11 +29,12 @@ Close the tab
 
 In terminal run <bash '/Applications/Python 3.9/Install Certificates.command'>
 	Do not include <>
-	If your Python is not 3.9 or it throws an error here, run in terminal run python3 --version
+	If your Python is not 3.9 or it throws an error here, run in terminal <python3 --version>
+	Do not include <>
 	Take the first two numbers and replace Python 3.9 with whatever version
 	Do not include the end number
 
-Run the test_eval.py file and test if it produces a number
+Run python3 test_eval.py in terminal and test if it produces a number
 
 It will run a few download commands as well
 
