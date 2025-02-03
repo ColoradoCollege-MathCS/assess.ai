@@ -73,7 +73,8 @@ class LLMsPage:
         # connect to indicated LLM in Hugging Face
         try:
             self.LLM = LLM(model_path) # create LLM
-            self.get_output(model_path)
+            self.LLM.load_LLM() # load LLM
+            #self.get_output(model_path)
             self.LLM.download_LLM() # download model to file in directory
             output = self.get_output(model_path) # get output from Hugging Face
             self.LLMInput.output_text.insert("1.0", model_path + " was successfully downloaded! \n " + output)
@@ -86,6 +87,8 @@ class LLMsPage:
             self.disable_output(True)
             self.disable_input(False)
             print(f"Error handling LLM: {str(e)}")
+
+        self.LLMList.write_list(self.LLMList.get_models())
 
     def disable_input(self, disable):
         if disable:
