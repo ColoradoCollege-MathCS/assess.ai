@@ -1,0 +1,23 @@
+Sources
+
+AI-driven generation of news summaries: https://hal.science/hal-04437765
+A study using GPT and Pegasus about each AI's accuracy (we can take their method of studying accuracy and apply it to our uses). Both models produced high quality summaries of news articles.
+
+Navigating dataset documentations in AI with Hugging-Face specifically: http://arxiv.org/pdf/2401.13822
+The Hugging Face community has a ways to go when it comes to documentation, but many of the top 100 dataset cards (86%) had filled out all of the suggested dataset cards section.
+
+For medical abstract summarization: https://research.ebsco.com/c/o46j2u/viewer/pdf/m5vdfbojwz
+ChatGPT's summaries were 70% shorter, rated as 'high quality' (paper explains how they came to this conclusion), and low bias.
+
+For generating medical records: https://academic.oup.com/jamia/article/27/1/99/5583723
+If we need to, we can generate somewhat accurate medical records with AI with the processes listed in this article.
+
+Diagnostic Clinical Descision using AI: https://research.ebsco.com/c/o46j2u/search/details/2twy4tgkzb?q=summary%20evaluation%20ai
+
+Human centered test and evaluation of military AI: https://research.ebsco.com/c/o46j2u/search/details/ykosntpf7z?q=summary%20evaluation%20ai
+
+Medical abstract summary with AI: https://research.ebsco.com/c/o46j2u/search/details/d2afd65kjj?q=summary%20evaluation%20ai
+
+Evaluation of AI tools using the REACT framework: https://research.ebsco.com/c/o46j2u/search/details/j3d2odpqen?q=summary%20evaluation%20ai
+
+Use of AI in pathology: https://research.ebsco.com/c/o46j2u/search/details/7o7ngbt4vb?q=summary%20evaluation%20ai
