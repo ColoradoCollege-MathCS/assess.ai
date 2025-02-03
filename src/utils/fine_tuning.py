@@ -53,7 +53,7 @@ class FineTuner:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             start_idx = self.config.get('start_idx', 0)
             end_idx = self.config.get('end_idx', len(train_data))
-            base_dir = Path("../model_files/finetunedmodels")
+            base_dir = Path("../model_files")
             base_dir.mkdir(exist_ok=True)
             
             # Include range info in output directory name

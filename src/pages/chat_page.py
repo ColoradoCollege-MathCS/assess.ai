@@ -7,9 +7,10 @@ from components import (
     InputFrame, 
     TitleFrame, 
     ChatArea, 
-    LoadingIndicator
+    LoadingIndicator,
+    ModelSelector
 )
-from utils.chat import ChatBot  
+from utils.chat import ChatBot
 
 class ChatPage:
     def __init__(self, root):
@@ -28,10 +29,7 @@ class ChatPage:
         self._setup_styles()
         self._configure_grid()
         self._initialize_components()
-        self._setup_bindings()
-        # Load chat history after GUI is ready (100ms delay)
-        threading.Thread(target=self.chatbot._load_model, daemon=True).start()
-        self.root.after(100, self.load_chat_history)
+        self._initialize_model_selector()
         
     def _configure_root(self):
         self.root.title("Assess.ai")
@@ -44,30 +42,60 @@ class ChatPage:
             
     def _configure_grid(self):
         self.container.grid_rowconfigure(0, weight=0)  # Title
-        self.container.grid_rowconfigure(1, weight=1)  # Chat
-        self.container.grid_rowconfigure(2, weight=0)  # Input
+        self.container.grid_rowconfigure(1, weight=0)  # Model Selector
+        self.container.grid_rowconfigure(2, weight=1)  # Chat
+        self.container.grid_rowconfigure(3, weight=0)  # Input
         self.container.grid_columnconfigure(0, weight=1)
         
     def _initialize_components(self):
         # Title
         self.title_frame = TitleFrame(self.container)
         self.title_frame.grid(row=0, column=0, sticky="ew", pady=(0, 5))
+
+        # Model Selector
+        self.model_selector = ModelSelector(self.container, self._on_model_select)
+        self.model_selector.grid(row=1, column=0, columnspan=2, sticky="ew")
         
         # Chat area
         self.chat_area = ChatArea(self.container)
         self.chat_area.grid_components()
+        self.chat_area.canvas.grid(row=2, column=0, sticky="nsew", padx=20, pady=(0, 5))
+        self.chat_area.scrollbar.grid(row=2, column=1, sticky="ns")
         
         # Loading indicator
         self.loading = LoadingIndicator(self.chat_area.scrollable_frame, self.root)
         
         # Input area
         self.input_frame = InputFrame(self.container, self.send_message)
-        self.input_frame.grid(row=2, column=0, sticky="ew", padx=20, pady=(0, 10))
+        self.input_frame.grid(row=3, column=0, sticky="ew", padx=20, pady=(0, 10))
+
+    def _initialize_model_selector(self):
+        available_models = self.chatbot.get_available_models()
+        if not available_models:
+            messagebox.showerror("Error", "No models found in model_files directory")
+            return
+        # Propagate to model selector on what models are available
+        self.model_selector.set_models(available_models)
+        try:
+            # Default to first model
+            self._on_model_select(available_models[0])
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load initial model: {str(e)}")
+
+    def _on_model_select(self, model_name):
+        try:
+            # Clear existing chat
+            for widget in self.chat_area.scrollable_frame.winfo_children():
+                widget.destroy()
+            # Load model in background
+            threading.Thread(target=self.chatbot.set_model, args=(model_name,), daemon=True).start()
+            self.load_chat_history()
+                
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
         
-    def _setup_bindings(self):
-        self.root.bind('<Escape>', lambda e: self.root.destroy())
-        
-    def set_processing_state(self, is_processing):
+    def set_loading_state(self, is_processing):
+        # Loading animation
         self.is_processing = is_processing
         self.root.after(0, self._update_input_state)
         
@@ -83,18 +111,17 @@ class ChatPage:
             
         try:
             # Add user message to chat
-            current_scroll = self.chat_area.canvas.yview()[0]
             self.add_message(message, is_user=True)
             self.root.update()
             self.loading.start()
-            self.set_processing_state(True)  # Disable input while processing
+            self.set_loading_state(True)  # Disable input while processing
             
             # Start AI response thread
             self._get_ai_response_threaded(message)
             
         except Exception as e:
             print(f"Error sending message: {str(e)}")
-            self.set_processing_state(False)  # Fixed: was True before
+            self.set_loading_state(False)  
         
     def _get_ai_response_threaded(self, user_input):
         def get_response():
@@ -112,14 +139,14 @@ class ChatPage:
             self.add_message(response, is_user=False)
             # After adding AI response, ensure we scroll to bottom
             self.root.after(100, self.chat_area.smooth_scroll_to_bottom)
-            self.set_processing_state(False)  # Re-enable input after response
+            self.set_loading_state(False)  # Re-enable input after response
         except Exception as e:
             print(f"Error handling response: {str(e)}")
             
     def _handle_ai_error(self, error_msg):
         self.loading.stop()
         self.add_message(error_msg, is_user=False)
-        self.set_processing_state(False)  # Re-enable input on error
+        self.set_loading_state(False)  # Re-enable input on error
         
     def add_message(self, text, is_user=True):
         bubble = ChatBubble(self.chat_area.scrollable_frame, text, is_user=is_user)

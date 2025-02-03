@@ -1,5 +1,11 @@
 # Changelog
 
+## 2-2
+- Added Matplotlib to Evaluation GUI
+- Support multiple models for evaluation and finetuning
+- Support multiple models for chat
+
+
 ## 1-31
 - Added Evaluation
 - Added Evaluation via GUI
