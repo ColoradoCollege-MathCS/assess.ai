@@ -4,6 +4,8 @@ Download the punkt_tab.zip file in the github and put it somewhere easy to find 
 
 Navigate to Users/admin_user folder
 	For example, Users/jane_doe
+	You can easily do this by searching for a file in Finder, highlight on one of the items (but do not open it), and look for the location at the bottom. You can click into your user folder or Macintosh HD
+	If you click into Macintosh HD, click into Users, then into your folder
 
 Unzip punkt_tab.zip
 
