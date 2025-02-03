@@ -1,7 +1,6 @@
-#import evaluate library for now
+
 import evaluate
 import nltk
-#import mathplotlib.pyplot as plt
 from nltk.translate.bleu_score import sentence_bleu
 from transformers import BertTokenizer, BertForMaskedLM, BertModel
 from rouge_score import rouge_scorer
@@ -21,7 +20,6 @@ openai_api_key_here = ""
 # REMEMBER TO DELETE THE KEY WHEN PUSHING TO GITHUB
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", openai_api_key_here))
 
-
 def load_summaries(original_abstracts, generated_summaries):
     #reads the entire file as a string
     with open(original_abstracts, 'r', encoding='utf-8') as f:
@@ -34,9 +32,7 @@ def load_summaries(original_abstracts, generated_summaries):
 
     return original_summaries, generated_summaries
     
-
 def rouge_calculator(reference, candidate): #caulculates rouge metric
-#rouge = evaluate.load('rouge') #load metric
     scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
     rouge_data = scorer.score(reference, candidate)
     for key in rouge_data:
@@ -45,7 +41,7 @@ def rouge_calculator(reference, candidate): #caulculates rouge metric
 
 
 def bleu_calculator(reference, candidate):
-    weights = (0.25, 0.25, 0, 0)  # Weights for uni-gram, bi-gram, tri-gram, and 4-gram
+    weights = (0.25, 0.25, 0, 0)  # weights for uni-gram, bi-gram, tri-gram, and 4-gram
     candidate_tokens = candidate.split() #tokenize
     reference_tokens = reference.split()
     #works by comparing ngrams in both refernece and candidate text
@@ -60,10 +56,6 @@ def bleu_calculator(reference, candidate):
 	#print(f"METEOR Score: {score}")
 	#
 def BERTScore_calculator(reference, candidate):
-    #bertscore = load("bertscore")
-   # scores = bertscore.compute(reference, candidate, lang="en")
-   # print(scores)
-   # BERTScore calculation
     scorer = BERTScorer(model_type='bert-base-uncased')
     P, R, F1 = scorer.score([candidate], [reference])
     precision = P.mean().item()
@@ -106,7 +98,6 @@ def evaluate_summaries(original_file, generated_file):
               BERTScore_scores = []
               #original = original.strip()
               #generated = generated.strip()
-    
               data_file.write("Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0." + "\n")
               # writes files as the stuff is calculated
               print("Calculating ROUGE scores for generated summary:")
@@ -133,12 +124,11 @@ def evaluate_summaries(original_file, generated_file):
              # str_mt = str(METEOR_results)
               #data_file.write("METEOR results for generated summary:" + str_mt + "\n")
 
-              print("Calculating GEval score for generated summary :")
-              GEval_results = GEVAL_calculator(original, generated)
-              geval_scores.append(GEval_results)
-              str_ge = str(GEval_results)
-              data_file.write("GEval results for generated summary:" + str_ge + "\n")
-
+             # print("Calculating GEval score for generated summary :")
+             # GEval_results = GEVAL_calculator(original, generated)
+             # geval_scores.append(GEval_results)
+              #str_ge = str(GEval_results)
+             # data_file.write("GEval results for generated summary:" + str_ge + "\n")
     
     except Exception as e:
               print(f"Failed to evaluate: {e}")
@@ -153,11 +143,6 @@ def main():
    # load_summaries(original_file, summarized_file)
     evaluate_summaries(original_file, summarized_file)
     
-#def display_results(rouge_results, bleu_results)
-#bleu is a single score, float between 0 and 1
-# rouge provudes precision, recall, and f1 scores for each metric (rouge1 rouge2 rougeL
-#print them and display them to a save file
-
 #def graph_results(rouge_results, bleu_results):
 #graph and display calculated results above in a fgraph or trendlune.
 #plotting the BLEU/ROUGE scores over time
