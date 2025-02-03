@@ -21,6 +21,7 @@ from deepeval.test_case import LLMTestCaseParams
 
 openai_api_key_here = ""
 # REMEMBER TO DELETE THE KEY WHEN PUSHING TO GITHUB
+
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", openai_api_key_here))
 
 def load_summaries(original_abstracts, generated_summaries):
@@ -75,7 +76,7 @@ def BERTScore_calculator(reference, candidate):
 
     #GEVAL
 
-def GEVAL_calculator(reference, candidate):
+def GEval_calculator(reference, candidate):
 	correctness_metric = GEval(
 		name="Correctness",
 		criteria="Determine whether the actual output is factually correct based on the expected output.",
