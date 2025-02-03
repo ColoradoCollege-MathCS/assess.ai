@@ -25,7 +25,8 @@ download the wordnet and omw-1.4 items
 
 Close the tab
 
-In terminal run bash '/Applications/Python 3.9/Install Certificates.command'
+In terminal run <bash '/Applications/Python 3.9/Install Certificates.command'>
+	Do not include <>
 	If your Python is not 3.9 or it throws an error here, run in terminal run python3 --version
 	Take the first two numbers and replace Python 3.9 with whatever version
 	Do not include the end number
