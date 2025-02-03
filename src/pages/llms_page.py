@@ -7,6 +7,7 @@ from utils.llm import LLM
 from components import (
     LLMInput,
     TitleFrame,
+    LLMList
 )
 
 
@@ -17,12 +18,10 @@ class LLMsPage:
         self.container = tk.Frame(self.root, bg="#D2E9FC")
         self.container.grid(row=1, column=1, sticky="nsew")
         self.term_output = ""
-
         self.setup_page()
 
     def setup_page(self):
         """Initialize and set up the LLMs page """
-
         self._configure_root()
         self._configure_grid()
         self._setup_styles()
@@ -38,6 +37,7 @@ class LLMsPage:
         """Configure grid layout"""
         self.container.grid_rowconfigure(0, weight=0)  # Title
         self.container.grid_rowconfigure(1, weight=0)  # LLM Input
+        self.container.grid_rowconfigure(2, weight=0)
         self.container.grid_columnconfigure(0, weight=1)
 
     def _setup_styles(self):
@@ -52,6 +52,10 @@ class LLMsPage:
         # LLM input area
         self.LLMInput = LLMInput(self.container, self.send_path)
         self.LLMInput.grid(row=1, column=0, sticky="ew", padx=20, pady=(0, 5))
+
+        # LLM list area
+        self.LLMList = LLMList(self.container)
+        self.LLMList.grid(row=2, column=0, sticky="ew", padx=20, pady=(0, 5))
 
     def _setup_bindings(self):
         self.root.bind('<Escape>', lambda e: self.root.destroy())
@@ -68,6 +72,7 @@ class LLMsPage:
 
         # connect to indicated LLM in Hugging Face
         try:
+            self.LLM = LLM(model_path) # create LLM
             self.get_output(model_path)
             self.LLM.download_LLM() # download model to file in directory
             output = self.get_output(model_path) # get output from Hugging Face
@@ -100,10 +105,9 @@ class LLMsPage:
     def get_output(self, model_path):
         buffer = io.StringIO()
         sys.stdout = buffer
-        sys.sterr = buffer
+        sys.stderr = buffer
 
         try:
-            self.LLM = LLM(model_path) # create LLM
             self.term_output = buffer.getvalue()
         except Exception as e:
             self.term_output = f"Error: {str(e)}"

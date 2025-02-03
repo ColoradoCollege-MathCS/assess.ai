@@ -26,8 +26,9 @@ class LLMInput(tk.Frame):
 
         # Output container frame with rounded corners
         self.output_container = RoundedFrame(self.container, "#FFFFFF", radius=50)
-        self.output_container.grid(row=2, column=0, sticky="ew", padx=20, pady=(0,2))
-        self.input_container.grid_columnconfigure(0, weight=1)
+        self.output_container.grid(row=2, column=0, sticky="ew", padx=20, pady=(0, 10))
+        self.output_container.grid_columnconfigure(0, weight=1)
+
         # Text input area (to input LLM path)
         self.input_text = tk.Text(
             self.input_container,
@@ -87,7 +88,7 @@ class LLMInput(tk.Frame):
         )
         self.output_text.configure(state="disable")
         #self.output_text.pack(fill="both", expand=True, padx=20, pady=2)
-        self.output_text.grid(row=0, column=0, sticky="ew", padx=20, pady=2)
+        self.output_text.grid(row=0, column=0, sticky="ew", padx=20, pady=5)
 
         self.download_button.bind("<Button-1>", self.handle_download)
 
