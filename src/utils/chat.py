@@ -10,11 +10,65 @@ class ChatBot:
         self.tokenizer = None
         self.model = None
         self.device = None
+<<<<<<< HEAD
         self.current_model = None
         base_path = Path(__file__).parent
         self.model_files_path = base_path / "../../model_files"
         self.chat_history_path = None
         self._ensure_model_directories()
+=======
+        self.model_path = Path(__file__).parent / "../../model_files/pegasus"
+        self.chat_history_path = Path("../chat_data/chat_history.txt")
+        self._ensure_chat_directories()
+
+    def _ensure_chat_directories(self):
+        # Checks if chat history already exists. If it doesn't it creates one.
+        self.chat_history_path.parent.mkdir(exist_ok=True)
+        if not self.chat_history_path.exists():
+            self.chat_history_path.write_text("")
+
+    def _save_chat_entry(self, entry_data):
+        # Save chat history in the background
+        try:
+            entry = {
+                'timestamp': datetime.now().isoformat(),
+                'data': entry_data,
+                'type': 'chat_entry'
+            }
+            
+            # Write to file in background
+            def write_to_file():
+                try:
+                    with open(self.chat_history_path, 'a', encoding='utf-8') as f:
+                        f.write(json.dumps(entry) + '\n')
+                except Exception as e:
+                    print(f"Failed to write chat entry: {str(e)}")
+            
+            threading.Thread(target=write_to_file, daemon=True).start()
+                
+        except Exception as e:
+            print(f"Failed to save chat entry: {str(e)}")
+
+    def load_chat_history(self, limit=None):
+        entries = []
+        try:
+            with open(self.chat_history_path, 'r', 
+                     encoding='utf-8') as f:
+                for line in f:
+                    if line.strip():
+                        try:
+                            entry = json.loads(line.strip())
+                            if entry['type'] == 'chat_entry':
+                                entries.append(entry)
+                        except json.JSONDecodeError:
+                            continue
+                                
+            return entries
+        except Exception as e:
+            print(f"Failed to load chat history: {str(e)}")
+            return []
+
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
 
 
     # parents=True makes the necessary parent directories before mmaking subdirectories exist_ok=True doesn't throw an error if the folder exists, 
@@ -50,6 +104,7 @@ class ChatBot:
             )
             self.device = torch.device('cpu')
             self.model = self.model.to(self.device)
+<<<<<<< HEAD
             return True
             
         except Exception as e:
@@ -102,6 +157,11 @@ class ChatBot:
     def get_response(self, user_input):
         if not self.current_model:
             raise ValueError("No model selected. Please select a model first.")
+=======
+        # else load selected model
+
+    def get_response(self, user_input):
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             
         try:
 
@@ -160,4 +220,9 @@ class ChatBot:
 
         except Exception as e:
             print(f"Error in get_response: {str(e)}")
+<<<<<<< HEAD
             return f"An error occurred: {str(e)}"
+=======
+            return f"An error occurred: {str(e)}"
+
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1

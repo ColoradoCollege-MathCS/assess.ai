@@ -30,17 +30,24 @@ class EvaluationForm(Form):
             bd=1
         )
         self.start_btn.pack(side=tk.LEFT, padx=5)
+<<<<<<< HEAD
         
+=======
+    
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
     def start_evaluation(self):
         validation_result = self.validate()
         if not validation_result:
             return
             
         dataset_path, model_path, start_idx, end_idx = validation_result
+<<<<<<< HEAD
         
         # Clear any existing plot
         if hasattr(self, 'evaluator') and self.evaluator:
             self.evaluator.clear_plot()
+=======
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             
         # Disable start button
         self.start_btn.config(state="disabled")
@@ -51,4 +58,8 @@ class EvaluationForm(Form):
             model_path,
             start_idx,
             end_idx
+<<<<<<< HEAD
         )
+=======
+        )
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1

@@ -1,3 +1,4 @@
+
 __pycache__/
 *.py[cod]
 *$py.class
@@ -5,4 +6,10 @@ model_files/
 medscribe_env/
 **/.DS_Store
 chat_data/
+<<<<<<< HEAD
 finetunedmodels/
+=======
+.env/
+finetunedmodels/
+.env/
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1

@@ -47,7 +47,23 @@ class LLMList(tk.Frame):
         return folder_list
 
     def write_list(self, list):
+<<<<<<< HEAD
         count = 0
         for i in list:
             count += 1
             self.list.insert(count, i)
+=======
+        self.list.delete(0,tk.END) # delete existing entries
+        count = 0
+        for model in list:
+            count += 1
+            self.list.insert(count, model)
+
+
+
+
+
+
+
+
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1

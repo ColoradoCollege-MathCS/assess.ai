@@ -1,6 +1,10 @@
 import torch
 from torch.utils.data import DataLoader
+<<<<<<< HEAD
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+=======
+from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
 import json
 from pathlib import Path
 from datetime import datetime
@@ -36,8 +40,13 @@ class FineTuner:
         self.config = json.loads(config_str)['training']
         
         # Load pre-trained model and tokenizer
+<<<<<<< HEAD
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
+=======
+        self.tokenizer = PegasusTokenizer.from_pretrained(self.model_path)
+        self.model = PegasusForConditionalGeneration.from_pretrained(
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             self.model_path,
             low_cpu_mem_usage=True
         )
@@ -53,7 +62,11 @@ class FineTuner:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             start_idx = self.config.get('start_idx', 0)
             end_idx = self.config.get('end_idx', len(train_data))
+<<<<<<< HEAD
             base_dir = Path("../model_files")
+=======
+            base_dir = Path("../model_files/finetunedmodels")
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             base_dir.mkdir(exist_ok=True)
             
             # Include range info in output directory name

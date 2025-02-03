@@ -1,4 +1,5 @@
 import torch
+<<<<<<< HEAD
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from rouge_score import rouge_scorer
 from pathlib import Path
@@ -6,6 +7,13 @@ from .data_loader import load_dataset
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+=======
+from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+from rouge_score import rouge_scorer
+from pathlib import Path
+from .data_loader import load_dataset
+
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
 
 """
 ROUGE-1: Measures unigram (single word) overlap
@@ -18,13 +26,21 @@ class Evaluator:
         # Use CPU
         self.device = torch.device('cpu')
         
+<<<<<<< HEAD
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
+=======
+        self.tokenizer = PegasusTokenizer.from_pretrained(self.model_path)
+        self.model = PegasusForConditionalGeneration.from_pretrained(
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             self.model_path,
             low_cpu_mem_usage=True
         )
         self.model.to(self.device)
+<<<<<<< HEAD
         self.model.to(self.device)
+=======
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
         
         # use_stemmer=True means the ROUGE scorer will use word stemming ("running" -> "run")
         self.scorer = rouge_scorer.RougeScorer(['rouge1'], use_stemmer=True)
@@ -33,6 +49,7 @@ class Evaluator:
         self.max_output_length = 128
         self.min_output_length = 30
         
+<<<<<<< HEAD
         # Initialize plotting variables
         self.figure = None
         self.ax = None
@@ -97,6 +114,9 @@ class Evaluator:
         self.canvas.draw()
         
     def load_dataset(self, data_path, start_idx, end_idx):
+=======
+    def load_dataset(self, data_path,start_idx,end_idx):
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
         # Load dataset with dataset validation
         return load_dataset(data_path, start_idx=start_idx, end_idx=end_idx)
         
@@ -161,15 +181,24 @@ class Evaluator:
                 raise ValueError("Test data is empty")
                 
             total_samples = len(test_data)
+<<<<<<< HEAD
             successful_samples = 0
+=======
+            successful_samples = 0 # Store this to report how many samples were processed
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             rouge_scores = []
             
             for idx, item in enumerate(test_data):
                 try:
                     generated_summary = self.generate_summary(item.get('input_text', ''))
                     if not generated_summary:
+<<<<<<< HEAD
                         raise ValueError(f"Failed to generate summary for sample {idx}")
                         
+=======
+                        raise ValueError(f"Failed to generate summary for sample {idx}. Summary is empty or invalid.")
+                    # Calculate ROUGE scores between generated and target summaries
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
                     scores = self.calculate_rouge_scores(
                         item.get('target_text', ''),
                         generated_summary
@@ -179,14 +208,26 @@ class Evaluator:
                         rouge_scores.append(scores)
                         successful_samples += 1
                         
+<<<<<<< HEAD
                         # Update progress and plot
                         if progress_callback:
+=======
+                        # Update progress
+                        if progress_callback:
+                            avg_scores = {
+                                'rouge1': sum(s['rouge1'] for s in rouge_scores) / len(rouge_scores)
+                            }
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
                             
                             progress = {
                                 'current': idx + 1,
                                 'total': total_samples,
                                 'successful': successful_samples,
+<<<<<<< HEAD
                                 'rouge1': scores['rouge1']  # Use current score instead of average
+=======
+                                'rouge1': avg_scores['rouge1']
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
                             }
                             progress_callback(progress)
                             
@@ -197,6 +238,10 @@ class Evaluator:
             if not rouge_scores:
                 raise ValueError("No valid samples were processed")
                 
+<<<<<<< HEAD
+=======
+            # Calculate final average scores
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             final_scores = {
                 'rouge1': sum(s['rouge1'] for s in rouge_scores) / len(rouge_scores),
                 'processed_samples': successful_samples,
@@ -207,6 +252,7 @@ class Evaluator:
             
         except Exception as e:
             print(f"Evaluation error: {str(e)}")
+<<<<<<< HEAD
             raise
 
 """
@@ -219,3 +265,6 @@ special_tokens_map.json - Defines special tokens used by the model
 tokenizer_config.json - Additional tokenizer configuration
 
 """
+=======
+            raise
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1

@@ -10,7 +10,11 @@ from components import (
     LoadingIndicator,
     ModelSelector
 )
+<<<<<<< HEAD
 from utils.chat import ChatBot
+=======
+from utils.chat import ChatBot  
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
 
 class ChatPage:
     def __init__(self, root):
@@ -29,7 +33,14 @@ class ChatPage:
         self._setup_styles()
         self._configure_grid()
         self._initialize_components()
+<<<<<<< HEAD
         self._initialize_model_selector()
+=======
+        self._setup_bindings()
+        # Load chat history after GUI is ready (100ms delay)
+        threading.Thread(target=self.chatbot._load_model, daemon=True).start()
+        self.root.after(100, self.load_chat_history)
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
         
     def _configure_root(self):
         self.root.title("Assess.ai")
@@ -94,8 +105,15 @@ class ChatPage:
         except Exception as e:
             messagebox.showerror("Error", str(e))
         
+<<<<<<< HEAD
     def set_loading_state(self, is_processing):
         # Loading animation
+=======
+    def _setup_bindings(self):
+        self.root.bind('<Escape>', lambda e: self.root.destroy())
+        
+    def set_processing_state(self, is_processing):
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
         self.is_processing = is_processing
         self.root.after(0, self._update_input_state)
         
@@ -121,7 +139,11 @@ class ChatPage:
             
         except Exception as e:
             print(f"Error sending message: {str(e)}")
+<<<<<<< HEAD
             self.set_loading_state(False)  
+=======
+            self.set_processing_state(False)  # Fixed: was True before
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
         
     def _get_ai_response_threaded(self, user_input):
         def get_response():
@@ -139,7 +161,11 @@ class ChatPage:
             self.add_message(response, is_user=False)
             # After adding AI response, ensure we scroll to bottom
             self.root.after(100, self.chat_area.smooth_scroll_to_bottom)
+<<<<<<< HEAD
             self.set_loading_state(False)  # Re-enable input after response
+=======
+            self.set_processing_state(False)  # Re-enable input after response
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
         except Exception as e:
             print(f"Error handling response: {str(e)}")
             

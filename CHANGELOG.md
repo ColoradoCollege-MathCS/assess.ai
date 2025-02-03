@@ -1,11 +1,14 @@
 # Changelog
 
+<<<<<<< HEAD
 ## 2-2
 - Added Matplotlib to Evaluation GUI
 - Support multiple models for evaluation and finetuning
 - Support multiple models for chat
 
 
+=======
+>>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
 ## 1-31
 - Added Evaluation
 - Added Evaluation via GUI
