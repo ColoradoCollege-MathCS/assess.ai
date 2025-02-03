@@ -40,7 +40,13 @@ class LLMInput(tk.Frame):
             highlightthickness=0,
             relief="flat"
         )
+        """self.input_text = tk.Entry(
+            self.input_container,
+            
+        """
+        self.input_text.tag_configure("center", justify='center')
         self.input_text.insert("1.0", "Type in model path here")# default text
+        self.input_text.tag_add("center", "1.0", "end")
         #self.input_text.pack(fill="both", expand=True, padx=20, pady=2)
         self.input_text.grid(row=0, column=0, sticky="ew", padx=20, pady=2)
         self.input_text.bind("<FocusIn>", self.default)
@@ -98,6 +104,7 @@ class LLMInput(tk.Frame):
             self.input_text.delete("1.0", tk.END)
         elif current == "\n":
             self.input_text.insert("1.0", "Type in model path here")
+            self.input_text.tag_add("center", "1.0", "end")
 
     def handle_download(self, event = None):
         model_path = self.get_input()
