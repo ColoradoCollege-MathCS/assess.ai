@@ -1,7 +1,6 @@
 #import evaluate library for now
 import evaluate
 import nltk
-import os
 #import mathplotlib.pyplot as plt
 from nltk.translate.bleu_score import sentence_bleu
 from transformers import BertTokenizer, BertForMaskedLM, BertModel
@@ -14,14 +13,6 @@ from summarizer import generate_summary
 #from deepeval.metrics import GEval
 #from deepeval.test_case import LLMTestCaseParams
 from tqdm import tqdm
-from openai import OpenAI
-from deepeval.metrics import GEval
-from deepeval.test_case import LLMTestCase
-from deepeval.test_case import LLMTestCaseParams
-
-# REMEMBER TO DELETE THE KEY WHEN PUSHING TO GITHUB
-
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
 
 def load_summaries(original_abstracts, generated_summaries):
     #reads the entire file as a string
@@ -76,24 +67,6 @@ def bertscore_calculator(reference, candidate):
     print(f"BERTScore Precision: {P.mean():.4f}, Recall: {R.mean():.4f}, F1: {F1.mean():.4f}")
     return P, R, F1
 
-def geval_calculator(reference, candidate):
-	correctness_metric = GEval(
-		name="Correctness",
-		criteria="Determine whether the actual output is factually correct based on the expected output.",
-		evaluation_steps=[
-			"Check whether the facts in 'actual output' contradicts any facts in 'expected output",
-			"You should also heavily penalize omission of detail",
-			"Vague language, or contradicting OPINIONS, are ok"
-		],
-		evaluation_params=[LLMTestCaseParams.INPUT,LLMTestCaseParams.ACTUAL_OUTPUT,LLMTestCaseParams.EXPECTED_OUTPUT],
-	)
-	test_case = LLMTestCase(reference, candidate, reference)
-
-	correctness_metric.measure(test_case)
-	return(correctness_metric.score)
-
-
-
 
 def evaluate_summaries(original_file, generated_file):
       # open the file data.txt; if there is no file, create one
@@ -108,7 +81,7 @@ def evaluate_summaries(original_file, generated_file):
               bleu_scores = []
               BERTScore_scores = []
               meteor_scores = []
-              geval_scores = []
+
               #original = original.strip()
               #generated = generated.strip()
              
@@ -137,13 +110,6 @@ def evaluate_summaries(original_file, generated_file):
               meteor_scores.append(METEOR_results)
               str_mt = str(METEOR_results)
               data_file.write("METEOR results:" + str_mt + "\n")
-
-              print("Calculating GEval score for generated summary :")
-              GEval_results = geval_calculator(original, generated)
-              geval_scores.append(GEval_results)
-              str_ge = str(GEval_results)
-              print(str_ge)
-              data_file.write("GEval results:" + str_ge + "\n")
 
     
     except Exception as e:
