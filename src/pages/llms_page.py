@@ -75,15 +75,15 @@ class LLMsPage:
             self.LLM = LLM(model_path) # create LLM
             self.LLM.load_LLM() # load LLM
             #self.get_output(model_path)
-            self.LLM.download_LLM() # download model to file in directory
+            self.LLM.import_LLM() # import model to file in directory
             output = self.get_output(model_path) # get output from Hugging Face
-            self.LLMInput.output_text.insert("1.0", model_path + " was successfully downloaded! \n " + output)
+            self.LLMInput.output_text.insert("1.0", model_path + " was successfully imported! \n " + output)
 
             self.disable_output(True)
             self.disable_input(False)
 
         except Exception as e:
-            self.LLMInput.output_text.insert("1.0", model_path + " could not be downloaded. Try again.")
+            self.LLMInput.output_text.insert("1.0", model_path + " could not be imported. Try again.")
             self.disable_output(True)
             self.disable_input(False)
             print(f"Error handling LLM: {str(e)}")
@@ -93,10 +93,10 @@ class LLMsPage:
     def disable_input(self, disable):
         if disable:
             self.LLMInput.input_text.configure(state="disable")
-            self.LLMInput.download_button.configure(state="disable")
+            self.LLMInput.import_button.configure(state="disable")
         else:
             self.LLMInput.input_text.configure(state="normal")
-            self.LLMInput.download_button.configure(state="normal")
+            self.LLMInput.import_button.configure(state="normal")
 
     def disable_output(self, disable):
         if disable:
