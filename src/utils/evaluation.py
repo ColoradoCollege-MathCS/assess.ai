@@ -1,8 +1,9 @@
 import torch
+import nltk
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from pathlib import Path
 from .data_loader import load_dataset
-from .eval_scores import ScoreCalculator
+from .eval_scores import ScoreCalculator, prevent_download, setup_nltk_paths
 
 class Evaluator:
     def __init__(self, model_path):
