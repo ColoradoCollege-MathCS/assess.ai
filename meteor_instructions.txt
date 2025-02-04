@@ -19,8 +19,6 @@ Place the unzipped foulder punkt_tab inside the tokenizers folder
 
 Navigate to terminal and run python3 download_nltk.py
 
-Download the third-party item in the collections tab
-
 Navigate to the corpa tab
 
 download the wordnet and omw-1.4 items
