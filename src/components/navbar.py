@@ -5,11 +5,9 @@ import tkinter as tk
 # Navigation items
 nav_items = [
     ("Home","home"),
-    ("Chat", "chat"),
     ("Evaluations", "evaluations"),
     ("LLMs", "llms"),
-    ("Finetune", "finetune"),
-    ("Projects", "projects")
+    ("Finetune", "finetune")
 ]
 
 class Navbar(tk.Frame):
@@ -17,7 +15,7 @@ class Navbar(tk.Frame):
         super().__init__(parent, bg="#FFFFFF", **kwargs)
         # Set callback function
         self.show_page_callback = show_page_callback
-        self.current_page = "chat"  # Default page
+        self.current_page = "llms"  # Default page
         self.buttons = {}  # Store button references
         self.logo_photo = None  
         self._setup_navbar()
@@ -96,7 +94,7 @@ class Navbar(tk.Frame):
             btn.bind("<Enter>", lambda e, b=btn_container, p=page: self._on_hover(b, p))
             btn.bind("<Leave>", lambda e, b=btn_container, p=page: self._on_leave(b, p))
         
-        self.set_active_page("chat")
+        self.set_active_page("llms")
 
     def _handle_click(self, page):
         if page != self.current_page:

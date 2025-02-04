@@ -40,6 +40,11 @@ class LLMList(tk.Frame):
         cwd = os.getcwd() # current directory
         parent = os.path.dirname(cwd)# parent directory
         model_dir = os.path.join(parent, "model_files")
+
+        # Create model_files directory if it doesn't exist
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+            return folder_list 
         # check if model_files
         for folder in os.listdir(model_dir): # list all folders in model_files folder
             if os.path.isdir(os.path.join(model_dir, folder)):
@@ -47,7 +52,8 @@ class LLMList(tk.Frame):
         return folder_list
 
     def write_list(self, list):
+        self.list.delete(0,tk.END) # delete existing entries
         count = 0
-        for i in list:
+        for model in list:
             count += 1
-            self.list.insert(count, i)
+            self.list.insert(count, model)

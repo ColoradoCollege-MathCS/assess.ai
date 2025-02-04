@@ -1,16 +1,8 @@
 import torch
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-from rouge_score import rouge_scorer
 from pathlib import Path
 from .data_loader import load_dataset
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-"""
-ROUGE-1: Measures unigram (single word) overlap
-For example, if the target text has "the cat sat" and the generated text has "the cat ran", it counts matches of individual words ("the" and "cat" match)
-"""
+from .eval_scores import ScoreCalculator
 
 class Evaluator:
     def __init__(self, model_path):
@@ -18,86 +10,110 @@ class Evaluator:
         # Use CPU
         self.device = torch.device('cpu')
         
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            self.model_path,
-            low_cpu_mem_usage=True
-        )
-        self.model.to(self.device)
-        self.model.to(self.device)
-        
-        # use_stemmer=True means the ROUGE scorer will use word stemming ("running" -> "run")
-        self.scorer = rouge_scorer.RougeScorer(['rouge1'], use_stemmer=True)
+        try:
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(
+                self.model_path,
+                low_cpu_mem_usage=True
+            )
+            self.model.to(self.device)
+        except Exception as e:
+            print(f"Error loading model: {str(e)}")
+            raise
+
+        # Initialize score calculator
+        self.score_calculator = ScoreCalculator()
 
         self.max_input_length = 512
         self.max_output_length = 128
         self.min_output_length = 30
         
-        # Initialize plotting variables
-        self.figure = None
-        self.ax = None
-        self.canvas = None
-        self.rouge_scores = []
+        # Dict to store scores
+        self.scores = {
+            'rouge1': [],
+            'rouge2': [],
+            'rougeL': [],
+            'bleu': [],
+            'meteor': [],
+            'bert_f1': []
+        }
         self.sample_indices = []
-        
-    def setup_plot(self, parent_widget):
-        # Initialize the matplotlib plot
-        self.figure = Figure(figsize=(6, 4), dpi=100)
-        self.ax = self.figure.add_subplot(111)
-        self.canvas = FigureCanvasTkAgg(self.figure, master=parent_widget)
-        self.canvas.get_tk_widget().grid(row=4, column=0, columnspan=3, padx=20, pady=10, sticky="nsew")
-        
-        # Setup initial plot
-        self.ax.set_title('ROUGE-1 Scores Over Time')
-        self.ax.set_xlabel('Sample Number')
-        self.ax.set_ylabel('ROUGE-1 Score')
-        self.ax.grid(True, linestyle='--', alpha=0.7)
-        self.ax.xaxis.set_major_locator
-        self.ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
-        self.figure.tight_layout()
-        
-    def update_plot(self, current_sample, rouge1_score):
-        if not self.figure or not self.ax:
-            return
-            
-        self.rouge_scores.append(rouge1_score)
-        self.sample_indices.append(current_sample)
-        
-        # Clear and redraw
-        self.ax.clear()
-        
-        # Plot scores
-        self.ax.plot(self.sample_indices, self.rouge_scores, 'b-', label='ROUGE-1')
 
-        self.ax.xaxis.set_major_locator(plt.MultipleLocator(base=1.0))
-        
-        # Reset plot styling
-        self.ax.set_title('ROUGE-1 Scores Over Time')
-        self.ax.set_xlabel('Sample Number')
-        self.ax.set_ylabel('ROUGE-1 Score')
-        self.ax.grid(True, linestyle='--', alpha=0.7)
-        self.ax.legend()
-        self.figure.tight_layout()
-        
-        # Refresh canvas
-        self.canvas.draw()
-        
-    def clear_plot(self):
-        if not self.ax:
-            return
+    def evaluate(self, test_data, progress_callback=None):
+        try:
+            if not test_data:
+                raise ValueError("Test data is empty")
+                
+            total_samples = len(test_data)
+            successful_samples = 0
+            all_scores = []
             
-        self.rouge_scores = []
-        self.sample_indices = []
-        self.ax.clear()
-        self.ax.set_title('ROUGE-1 Scores Over Time')
-        self.ax.set_xlabel('Sample Number')
-        self.ax.set_ylabel('ROUGE-1 Score')
-        self.ax.grid(True, linestyle='--', alpha=0.7)
-        self.figure.tight_layout()
-        self.canvas.draw()
-        
+            for idx, item in enumerate(test_data):
+                try:
+                    generated_summary = self.generate_summary(item.get('input_text', ''))
+                    if not generated_summary:
+                        print(f"Empty generated summary for sample {idx}")
+                        continue
+                    
+                    reference = item.get('target_text', '')
+                    if not reference:
+                        print(f"Empty reference for sample {idx}")
+                        continue
+                    
+                    # Calculate all metrics with safe defaults using ScoreCalculator
+                    rouge_scores = self.score_calculator.rouge_calculator(reference, generated_summary)
+                    bleu_score = self.score_calculator.bleu_calculator(reference, generated_summary)
+                    meteor_score = self.score_calculator.meteor_calculator(reference, generated_summary)
+                    bert_scores = self.score_calculator.bertscore_calculator(reference, generated_summary)
+                    
+                    # Combine all scores
+                    sample_scores = {
+                        'rouge1': rouge_scores['rouge1'],
+                        'rouge2': rouge_scores['rouge2'],
+                        'rougeL': rouge_scores['rougeL'],
+                        'bleu': bleu_score,
+                        'meteor': meteor_score,
+                        'bert_f1': bert_scores['f1']
+                    }
+                    
+                    # Store scores
+                    all_scores.append(sample_scores)
+                    successful_samples += 1
+                    
+                    # Update progress
+                    if progress_callback:
+                        progress = {
+                            'current': idx + 1,
+                            'total': total_samples,
+                            'successful': successful_samples,
+                            'scores': sample_scores
+                        }
+                        progress_callback(progress)
+                        
+                except Exception as e:
+                    print(f"Error processing sample {idx}: {str(e)}")
+                    continue
+                    
+            if not all_scores:
+                raise ValueError("No valid samples were processed")
+                
+            # Calculate final average scores
+            final_scores = {
+                metric: sum(scores[metric] for scores in all_scores) / len(all_scores)
+                for metric in all_scores[0].keys()
+            }
+            final_scores.update({
+                'processed_samples': successful_samples,
+                'total_samples': total_samples
+            })
+            
+            return final_scores
+            
+        except Exception as e:
+            print(f"Evaluation error: {str(e)}")
+            raise
+
     def load_dataset(self, data_path, start_idx, end_idx):
-        # Load dataset with dataset validation
         return load_dataset(data_path, start_idx=start_idx, end_idx=end_idx)
         
     def generate_summary(self, text):
@@ -105,7 +121,6 @@ class Evaluator:
             if not text:
                 return ""
                 
-            # Tokenize with padding and truncation
             inputs = self.tokenizer(
                 text,
                 max_length=self.max_input_length,
@@ -114,7 +129,6 @@ class Evaluator:
                 return_tensors="pt"
             )
             
-            # Generate summary
             try:
                 with torch.no_grad():
                     summary_ids = self.model.generate(
@@ -128,94 +142,11 @@ class Evaluator:
                         eos_token_id=self.tokenizer.eos_token_id
                     )
             except RuntimeError as e:
-                if "out of memory" in str(e):
-                    torch.cuda.empty_cache()
-                    return ""
-                raise
+                raise ValueError(f"Error: {str(e)}")
                 
-            # Decode summary
             summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
             return summary.strip()
             
         except Exception as e:
             print(f"Error generating summary: {str(e)}")
             return ""
-        
-    def calculate_rouge_scores(self, reference, candidate):
-        # Reference = Target, Candidate = LLM generated summary. Use this terminology here for good practice
-        # Return F1 scores of
-        try:
-            if not reference or not candidate:
-                return None
-            scores = self.scorer.score(reference, candidate)
-            return {
-                'rouge1': scores['rouge1'].fmeasure, # # This is the F1 score
-            }
-        except Exception as e:
-            print(f"Error calculating ROUGE scores: {str(e)}")
-            return None
-        
-    def evaluate(self, test_data, progress_callback=None):
-        try:
-            if not test_data:
-                raise ValueError("Test data is empty")
-                
-            total_samples = len(test_data)
-            successful_samples = 0
-            rouge_scores = []
-            
-            for idx, item in enumerate(test_data):
-                try:
-                    generated_summary = self.generate_summary(item.get('input_text', ''))
-                    if not generated_summary:
-                        raise ValueError(f"Failed to generate summary for sample {idx}")
-                        
-                    scores = self.calculate_rouge_scores(
-                        item.get('target_text', ''),
-                        generated_summary
-                    )
-                    
-                    if scores:
-                        rouge_scores.append(scores)
-                        successful_samples += 1
-                        
-                        # Update progress and plot
-                        if progress_callback:
-                            
-                            progress = {
-                                'current': idx + 1,
-                                'total': total_samples,
-                                'successful': successful_samples,
-                                'rouge1': scores['rouge1']  # Use current score instead of average
-                            }
-                            progress_callback(progress)
-                            
-                except Exception as e:
-                    print(f"Error processing sample {idx}: {str(e)}")
-                    continue
-                    
-            if not rouge_scores:
-                raise ValueError("No valid samples were processed")
-                
-            final_scores = {
-                'rouge1': sum(s['rouge1'] for s in rouge_scores) / len(rouge_scores),
-                'processed_samples': successful_samples,
-                'total_samples': total_samples
-            }
-            
-            return final_scores
-            
-        except Exception as e:
-            print(f"Evaluation error: {str(e)}")
-            raise
-
-"""
-For AutoModelForSeq2SeqLM and AutoTokenizer to work properly with a model, the model directory must contain these essential files:
-
-config.json - Contains model architecture and configuration details
-pytorch_model.bin or weights.safetensors - The actual model weights
-tokenizer.json - Contains tokenizer configuration
-special_tokens_map.json - Defines special tokens used by the model
-tokenizer_config.json - Additional tokenizer configuration
-
-"""
