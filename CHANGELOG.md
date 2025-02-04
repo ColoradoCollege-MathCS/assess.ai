@@ -1,6 +1,13 @@
 # Changelog
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+## 2-3
+- Removed Chat
+- Added most evaluations (ROUGE, BLEU, METEOR)
+
+>>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
 ## 2-2
 - Added Matplotlib to Evaluation GUI
 - Support multiple models for evaluation and finetuning

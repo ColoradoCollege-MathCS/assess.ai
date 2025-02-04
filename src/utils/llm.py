@@ -1,13 +1,27 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+=======
+from transformers import (
+    AutoConfig,
+    AutoTokenizer,
+    AutoModelForSeq2SeqLM,
+    AutoModel,
+    AutoModelForCausalLM
+)
+
+>>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
 
 class LLM:
     def __init__(self, model_id):
-        # load LLM from Hugging Face
         self.model_id = model_id
-        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_id)
+        self.config = AutoConfig.from_pretrained(self.model_id)
+        self.model_type = self.config.model_type
+        self.model_class = None
+        self.tokenizer = None
+        self.model = None
 
+<<<<<<< HEAD
 
     def tokenize (self, input_text):
 =======
@@ -31,6 +45,9 @@ class LLM:
 
     def tokenize(self, input_text):
 >>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
+=======
+    def tokenize(self, input_text):
+>>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
         # tokenize text
         return self.tokenizer(input_text, padding=True, truncation=True, return_tensors="pt")
 
@@ -46,12 +63,17 @@ class LLM:
         # save model and tokenizer
         path_name = f"../model_files/{self.model_id.replace('/', '_')}"
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.model.save_pretrained ("../model_files/" + path_name)
         self.tokenizer.save_pretrained("../model_files/" + path_name)
         print (self.model_id + " was successfully downloaded!")
 =======
         self.model.save_pretrained("../model_files/" + path_name)
         self.tokenizer.save_pretrained("../model_files/" + path_name)
+=======
+        self.model.save_pretrained("../model_files/" + path_name)
+        self.tokenizer.save_pretrained("../model_files/" + path_name)
+>>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
         print(self.model_id + " was successfully downloaded!")
 
     def load_LLM(self):
@@ -75,5 +97,9 @@ class LLM:
 
         # load model with correct configurations
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
+<<<<<<< HEAD
         self.model = self.model_class.from_pretrained(self.model_id)
 >>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
+=======
+        self.model = self.model_class.from_pretrained(self.model_id)
+>>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d

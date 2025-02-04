@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import threading
-from pathlib import Path
 from utils.evaluation import Evaluator
 from components.evaluation_form import EvaluationForm
 
@@ -34,6 +33,16 @@ class EvaluationPage:
         
         self.form = EvaluationForm(content, self.handle_start_evaluation)
         
+    def format_metrics(self, scores):
+        return (
+            f"ROUGE-1: {scores.get('rouge1', 0):.4f}\n"
+            f"ROUGE-2: {scores.get('rouge2', 0):.4f}\n"
+            f"ROUGE-L: {scores.get('rougeL', 0):.4f}\n"
+            f"BLEU: {scores.get('bleu', 0):.4f}\n"
+            f"METEOR: {scores.get('meteor', 0):.4f}\n"
+            f"BERTScore F1: {scores.get('bert_f1', 0):.4f}"
+        )
+        
     def run_evaluation(self, dataset_path, model_path, start_idx, end_idx):
         try:
             # Initialize evaluator
@@ -41,8 +50,11 @@ class EvaluationPage:
             evaluator = Evaluator(model_path)
             
 <<<<<<< HEAD
+<<<<<<< HEAD
             # Setup plot in the form
             evaluator.setup_plot(self.form.form)
+=======
+>>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
             self.form.evaluator = evaluator
             
 =======
@@ -62,22 +74,24 @@ class EvaluationPage:
                 current = progress_info['current']
                 total = progress_info['total']
                 successful = progress_info['successful']
-                rouge1 = progress_info['rouge1']
+                scores = progress_info.get('scores', {})
                 
-                # Update status with current progress
+                # Update status with current progress and all metrics
                 status_text = (
-                    f"Evaluating samples {start_idx}-{end_idx}\n"
                     f"Current sample: {start_idx + current}/{end_idx} "
-                    f"(Processed {successful} successfully)\n"
-                    f"Current ROUGE-1: {rouge1:.4f}\n"
+                    f"(Processed {successful} successfully)\n\n"
+                    f"Current Metrics:\n{self.format_metrics(scores)}\n"
                 )
                 self.root.after(0, lambda: self.form.update_status(status_text))
+<<<<<<< HEAD
 <<<<<<< HEAD
                 
                 # Update plot
                 self.root.after(0, lambda: evaluator.update_plot(current, rouge1))
 =======
 >>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
+=======
+>>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
             
             # Run evaluation
             final_scores = evaluator.evaluate(
@@ -88,18 +102,24 @@ class EvaluationPage:
             # Update status with final scores
             final_status = (
                 f"\nEvaluation complete for samples {start_idx}-{end_idx}!\n"
-                f"Successfully processed {final_scores['processed_samples']} out of {final_scores['total_samples']} samples\n"
-                f"Final ROUGE-1: {final_scores['rouge1']:.4f}\n"
+                f"Successfully processed {final_scores['processed_samples']} out of {final_scores['total_samples']} samples\n\n"
+                f"Final Metrics:\n{self.format_metrics(final_scores)}\n"
             )
             self.root.after(0, lambda: self.form.update_status(final_status))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
         except Exception as e:
-            # Handle any errors during evaluation
-            self.root.after(0, lambda: self.form.update_status(f"Error: {str(e)}", is_error=True))
+            error_msg = f"Error: {str(e)}"
+            self.root.after(0, lambda: self.form.update_status(error_msg, is_error=True))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
     def handle_start_evaluation(self, dataset_path, model_path, start_idx, end_idx):
+        # Disable start button while evaluation is running
+        self.form.start_btn.config(state="disabled")
+        
+        # Clear previous status
+        self.form.update_status("")
+        
         # Start evaluation in a separate thread
         thread = threading.Thread(
             target=self.run_evaluation,
