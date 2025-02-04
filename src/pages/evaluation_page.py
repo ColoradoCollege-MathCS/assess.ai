@@ -66,7 +66,6 @@ class EvaluationPage:
                 
                 # Update status with current progress and all metrics
                 status_text = (
-                    f"Evaluating samples {start_idx}-{end_idx}\n"
                     f"Current sample: {start_idx + current}/{end_idx} "
                     f"(Processed {successful} successfully)\n\n"
                     f"Current Metrics:\n{self.format_metrics(scores)}\n"
