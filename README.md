@@ -9,10 +9,9 @@ https://github.com/user-attachments/assets/82a473e8-4ae2-4352-b59b-a112da76b475
 
 
 ## Features
-- Text Summarization with Pegasus LLM
-- Chat history storage 
-- Finetune models 
-- Model Evaluation
+- Load Huggingface models
+- Finetune models with summarization dataset
+- Model Evaluation (ROUGE, BLEU, METEOR)
 ## Installation
 
 1. Clone this repository:
