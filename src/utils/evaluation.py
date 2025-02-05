@@ -107,6 +107,19 @@ class Evaluator:
                 'processed_samples': successful_samples,
                 'total_samples': total_samples
             })
+            data_file = open("evaluation_results.txt","a")
+            try:
+                data_file.write("Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0." + "\n")
+                data_file.write("Total Samples: {total_samples}\n")
+                data_file.write(f" Processed Samples: {successful_samples}\n")
+                data_file.write(f"Average Scores: \n")
+                data_file.write(f"Bleu Score: {bleu_score} \n")
+                data_file.write(f"Rouge Score: {rouge_scores} \n")
+                data_file.write(f"Meteor Score: {meteor_score} \n")
+                data_file.write(f"Bert Score: {bert_scores} \n")
+
+            except Exception as e:
+              print(f"Unable to write in file: {e}")
             
             return final_scores
             
