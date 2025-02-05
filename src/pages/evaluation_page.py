@@ -3,6 +3,7 @@ from tkinter import ttk
 import threading
 from utils.evaluation import Evaluator
 from components.evaluation_form import EvaluationForm
+from components.graph import EvaluationVisualizer
 
 class EvaluationPage:
     def __init__(self, root):
@@ -28,6 +29,9 @@ class EvaluationPage:
         ttk.Separator(content, orient="horizontal").grid(row=1, column=0, sticky="ew", padx=20)
         
         self.form = EvaluationForm(content, self.handle_start_evaluation)
+        
+        # Initialize visualizer after form setup
+        self.visualizer = EvaluationVisualizer(content)
         
     def format_metrics(self, scores):
         return (
@@ -67,11 +71,12 @@ class EvaluationPage:
                 # Update status with current progress and all metrics
                 status_text = (
                     f"Current sample: {start_idx + current}/{end_idx} "
-                    f"(Processed {successful} successfully)\n\n"
-                    f"Current Metrics:\n{self.format_metrics(scores)}\n"
+                    f"(Processed {successful} successfully)"
+                    f"\n{self.format_metrics(scores)}\n"
                 )
                 self.root.after(0, lambda: self.form.update_status(status_text))
-            
+                # Update graph
+                self.root.after(0, lambda: self.visualizer.update_plots(scores))
             # Run evaluation
             final_scores = evaluator.evaluate(
                 test_data,
@@ -87,12 +92,18 @@ class EvaluationPage:
             self.root.after(0, lambda: self.form.update_status(final_status))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
+            # Show final radar chart
+            self.root.after(0, lambda: self.visualizer.plot_final_radar(final_scores))
+            
         except Exception as e:
             error_msg = f"Error: {str(e)}"
             self.root.after(0, lambda: self.form.update_status(error_msg, is_error=True))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
     def handle_start_evaluation(self, dataset_path, model_path, start_idx, end_idx):
+        # Clear previous plots
+        self.visualizer.clear_plots()
+        
         # Disable start button while evaluation is running
         self.form.start_btn.config(state="disabled")
         
