@@ -35,12 +35,17 @@ class EvaluationPage:
         
     def format_metrics(self, scores):
         return (
-            f"ROUGE-1: {scores.get('rouge1', 0):.4f}\n"
-            f"ROUGE-2: {scores.get('rouge2', 0):.4f}\n"
+            f"ROUGE-1: {scores.get('rouge1', 0):.4f}, "
+            f"ROUGE-2: {scores.get('rouge2', 0):.4f}, "
             f"ROUGE-L: {scores.get('rougeL', 0):.4f}\n"
-            f"BLEU: {scores.get('bleu', 0):.4f}\n"
-            f"METEOR: {scores.get('meteor', 0):.4f}\n"
-            f"BERTScore F1: {scores.get('bert_f1', 0):.4f}"
+            f"BLEU: {scores.get('bleu', 0):.4f}, "
+            f"METEOR: {scores.get('meteor', 0):.4f}, "
+            f"BERTScore F1: {scores.get('bert_f1', 0):.4f}\n"
+            f"G-Eval Metrics:\n"
+            f"  Coherence: {scores.get('coherence', 0):.4f}\n"
+            f"  Consistency: {scores.get('consistency', 0):.4f}\n"
+            f"  Fluency: {scores.get('fluency', 0):.4f}\n"
+            f"  Relevance: {scores.get('relevance', 0):.4f}"
         )
         
     def run_evaluation(self, dataset_path, model_path, start_idx, end_idx):

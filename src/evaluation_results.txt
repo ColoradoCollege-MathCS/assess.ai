@@ -1,0 +1,39 @@
+Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0.
+Total Samples: {total_samples}
+ Processed Samples: 3
+Average Scores: 
+Bleu Score: 0.18683736079335847 
+Rouge Score: {'rouge1': 0.2162162162162162, 'rouge2': 0.02777777777777778, 'rougeL': 0.1081081081081081} 
+Meteor Score: 0.17 
+Bert Score: {'precision': 0.4321121871471405, 'recall': 0.4161052703857422, 'f1': 0.4239576756954193} 
+G-Evaluation Scores: 
+  Coherence: 1.21 
+  Consistency: 1.33 
+  Fluency: 2.33 
+  Relevance: 2.45 
+Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0.
+Total Samples: {total_samples}
+ Processed Samples: 3
+Average Scores: 
+Bleu Score: 0.2086020988594882 
+Rouge Score: {'rouge1': 0.12949640287769784, 'rouge2': 0.029197080291970805, 'rougeL': 0.07194244604316546} 
+Meteor Score: 0.22 
+Bert Score: {'precision': 0.43114230036735535, 'recall': 0.4953588843345642, 'f1': 0.4610251486301422} 
+G-Evaluation Scores: 
+  Coherence: 5.0 
+  Consistency: 4.25 
+  Fluency: 3.0 
+  Relevance: 5.0 
+Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0.
+Total Samples: {total_samples}
+ Processed Samples: 3
+Average Scores: 
+Bleu Score: 0.2086020988594882 
+Rouge Score: {'rouge1': 0.12949640287769784, 'rouge2': 0.029197080291970805, 'rougeL': 0.07194244604316546} 
+Meteor Score: 0.22 
+Bert Score: {'precision': 0.43114230036735535, 'recall': 0.4953588843345642, 'f1': 0.4610251486301422} 
+G-Evaluation Scores: 
+  Coherence: 5.0 
+  Consistency: 4.25 
+  Fluency: 3.0 
+  Relevance: 5.0 

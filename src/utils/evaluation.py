@@ -31,12 +31,16 @@ class Evaluator:
         
         # Dict to store scores
         self.scores = {
-            'rouge1': [],
-            'rouge2': [],
-            'rougeL': [],
-            'bleu': [],
-            'meteor': [],
-            'bert_f1': []
+        'rouge1': [],
+        'rouge2': [],
+        'rougeL': [],
+        'bleu': [],
+        'meteor': [],
+        'bert_f1': [],
+        'coherence': [],
+        'consistency': [],
+        'fluency': [],
+        'relevance': []
         }
         self.sample_indices = []
 
@@ -66,16 +70,22 @@ class Evaluator:
                     bleu_score = self.score_calculator.bleu_calculator(reference, generated_summary)
                     meteor_score = self.score_calculator.meteor_calculator(reference, generated_summary)
                     bert_scores = self.score_calculator.bertscore_calculator(reference, generated_summary)
+                    g_eval_scores = self.score_calculator.g_eval(reference, generated_summary)
                     
                     # Combine all scores
                     sample_scores = {
-                        'rouge1': rouge_scores['rouge1'],
-                        'rouge2': rouge_scores['rouge2'],
-                        'rougeL': rouge_scores['rougeL'],
-                        'bleu': bleu_score,
-                        'meteor': meteor_score,
-                        'bert_f1': bert_scores['f1']
+                    'rouge1': rouge_scores['rouge1'],
+                    'rouge2': rouge_scores['rouge2'],
+                    'rougeL': rouge_scores['rougeL'],
+                    'bleu': bleu_score,
+                    'meteor': meteor_score,
+                    'bert_f1': bert_scores['f1'],
+                    'coherence': g_eval_scores.get('coherence', {}).get('average', 0),
+                    'consistency': g_eval_scores.get('consistency', {}).get('average', 0),
+                    'fluency': g_eval_scores.get('fluency', {}).get('average', 0),
+                    'relevance': g_eval_scores.get('relevance', {}).get('average', 0)
                     }
+                
                     
                     # Store scores
                     all_scores.append(sample_scores)
@@ -110,13 +120,17 @@ class Evaluator:
             data_file = open("evaluation_results.txt","a")
             try:
                 data_file.write("Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0." + "\n")
-                data_file.write("Total Samples: {total_samples}\n")
                 data_file.write(f" Processed Samples: {successful_samples}\n")
                 data_file.write(f"Average Scores: \n")
                 data_file.write(f"Bleu Score: {bleu_score} \n")
                 data_file.write(f"Rouge Score: {rouge_scores} \n")
                 data_file.write(f"Meteor Score: {meteor_score} \n")
                 data_file.write(f"Bert Score: {bert_scores} \n")
+                data_file.write(f"G-Evaluation Scores: \n")
+                data_file.write(f"  Coherence: {g_eval_scores.get('coherence', {}).get('average', 0)} \n")
+                data_file.write(f"  Consistency: {g_eval_scores.get('consistency', {}).get('average', 0)} \n")
+                data_file.write(f"  Fluency: {g_eval_scores.get('fluency', {}).get('average', 0)} \n")
+                data_file.write(f"  Relevance: {g_eval_scores.get('relevance', {}).get('average', 0)} \n")
 
             except Exception as e:
               print(f"Unable to write in file: {e}")
