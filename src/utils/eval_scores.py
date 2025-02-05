@@ -43,6 +43,7 @@ def prevent_download(*args, **kwargs):
     print(f"NLTK download attempted (and prevented) for: {args}")
     return
 
+
 @contextmanager
 def suppress_stdout_stderr():
     with open(os.devnull, "w") as devnull:
@@ -55,6 +56,12 @@ def suppress_stdout_stderr():
         finally:
             sys.stdout = old_stdout
             sys.stderr = old_stderr
+
+# Set up NLTK paths and prevent download. NLTK defaults to downloading files for every run but we already have them locally
+setup_nltk_paths()
+
+# The line nltk.download = prevent_download replaces NLTK's original download function with our custom function.
+nltk.download = prevent_download
 
 class ScoreCalculator:
     def __init__(self):
