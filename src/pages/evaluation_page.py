@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 import threading
+from datetime import datetime
+from pathlib import Path
 from utils.evaluation import Evaluator
 from components.evaluation_form import EvaluationForm
 from components.evaluation_visualizer import EvaluationVisualizer
@@ -106,11 +108,22 @@ class EvaluationPage:
             )
             # Update log with final message
             self.root.after(0, lambda: self.form.update_status(final_status))
-            # Reset start button
-            self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
             # Show final radar chart
             self.root.after(0, lambda: self.visualizer.plot_final_radar(final_scores, use_geval))
+            
+            # Create directory for saving results
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            model_name = Path(model_path).stem
+            log_dir = Path("../eval_files") / f"{timestamp}_{model_name}"
+            log_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Save all evaluation data
+            evaluator.save_logs(log_dir, final_scores, final_scores['processed_samples'], final_scores['total_samples'])
+            self.root.after(0, lambda: self.visualizer.save_plots(log_dir))
+            
+            # Reset start button
+            self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
         except Exception as e:
             error_msg = f"Error: {str(e)}"

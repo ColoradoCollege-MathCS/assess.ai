@@ -9,6 +9,7 @@ import statistics
 import logging
 import sys
 from contextlib import contextmanager
+from llama_cpp import Llama
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
