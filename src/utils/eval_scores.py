@@ -5,7 +5,6 @@ from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 import evaluate
 from bert_score import BERTScorer
 from nltk.data import path as nltk_data_path
-from llama_cpp import Llama
 import statistics
 import logging
 import sys
