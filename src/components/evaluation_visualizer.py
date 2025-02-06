@@ -397,24 +397,35 @@ class EvaluationVisualizer:
             save_dir = Path(save_dir)
             save_dir.mkdir(parents=True, exist_ok=True)
             
-            # Save traditional metrics progress plot
-            self.fig_traditional.savefig(
-                save_dir / 'traditional_metrics_progress.png',
-                bbox_inches='tight',
-                dpi=300,
-                facecolor='white'
-            )
+            # Get max scroll position using existing class variables
+            n_samples = len(next(iter(self.metrics_history.values())))
+            max_scroll = max(0, n_samples - self.visible_samples)
             
-            # Save G-EVAL progress plot if it exists
-            if self.plot_frame_geval.winfo_ismapped():
-                self.fig_geval.savefig(
-                    save_dir / 'geval_metrics_progress.png',
+            # Save traditional metrics at each position (Get a bar chart for each position)
+            for pos in range(max_scroll + 1):
+                # Use existing update methods
+                self.current_traditional_pos = pos
+                self._update_traditional_plot()
+                self.fig_traditional.savefig(
+                    save_dir / f'traditional_metrics_{pos+1:03d}.png',
                     bbox_inches='tight',
                     dpi=300,
                     facecolor='white'
                 )
             
-            # Save radar plot if it exists
+            # Save G-EVAL metrics at each position if enabled
+            if self.plot_frame_geval.winfo_ismapped():
+                for pos in range(max_scroll + 1):
+                    self.current_geval_pos = pos
+                    self._update_geval_plot()
+                    self.fig_geval.savefig(
+                        save_dir / f'geval_metrics_{pos+1:03d}.png',
+                        bbox_inches='tight',
+                        dpi=300,
+                        facecolor='white'
+                    )
+            
+            # Save radar plot if visible
             if self.final_frame.winfo_ismapped():
                 self.fig_radar.savefig(
                     save_dir / 'final_radar_plot.png',
