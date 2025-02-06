@@ -27,10 +27,10 @@ pip install -r requirements.txt
 
 ## Setup and Usage
 
-1. Download the required model first (this is required before first run):
+1. Download the required model first (this is required before first run to do G-EVAL):
 ```bash
 cd src
-python download_pegasus.py
+python download_mistral.py
 ```
 
 2. Start the application:
