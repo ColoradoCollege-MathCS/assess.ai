@@ -2,7 +2,6 @@ import sys
 import tkinter as tk
 import io
 from tkinter import ttk
-from subprocess import run
 from utils.llm import LLM
 from components import (
     LLMInput,
@@ -15,10 +14,23 @@ class LLMsPage:
     def __init__(self, root):
         self.LLM = None
         self.root = root
+
         self.container = tk.Frame(self.root, bg="#D2E9FC")
         self.container.grid(row=1, column=1, sticky="nsew")
-        self.term_output = ""
         self.setup_page()
+
+        """
+        # scrollbar logistics
+        self.canvas = tk.Canvas(self.root, bg="#D2E9FC")
+        self.canvas.grid(row=1, column=1, sticky="nsew")
+        self.create_scrollbar()
+        self.canvas.configure(yscrollcommand = self.scrollbar.set)
+
+        
+
+        self.container.update_idletasks()
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+        """
 
     def setup_page(self):
         """Initialize and set up the LLMs page """
@@ -37,7 +49,6 @@ class LLMsPage:
         """Configure grid layout"""
         self.container.grid_rowconfigure(0, weight=0)  # Title
         self.container.grid_rowconfigure(1, weight=0)  # LLM Input
-        self.container.grid_rowconfigure(2, weight=0)
         self.container.grid_columnconfigure(0, weight=1)
 
     def _setup_styles(self):
@@ -50,24 +61,14 @@ class LLMsPage:
         self.title_frame.grid(row=0, column=0, sticky="ew", pady=(0,50))
 
         # LLM input area
-        self.LLMInput = LLMInput(self.container, self.send_path)
+        self.LLMInput = LLMInput(self.container, self.root, self.send_path)
         self.LLMInput.grid(row=1, column=0, sticky="ew", padx=20, pady=(0, 5))
-
-        # LLM list area
-        self.LLMList = LLMList(self.container)
-        self.LLMList.grid(row=2, column=0, sticky="ew", padx=20, pady=(0, 5))
 
     def _setup_bindings(self):
         self.root.bind('<Escape>', lambda e: self.root.destroy())
 
     def send_path(self, model_path):
-        # if message is empty
-        if not model_path.strip():
-            return
-
-        # if message not empty
-        self.disable_input(True) # disable text input
-        self.disable_output(False)
+        self.LLMInput.disable_input(True) # disable text input
         self.LLMInput.output_text.delete("1.0", tk.END)
 
         # connect to indicated LLM in Hugging Face
@@ -78,31 +79,17 @@ class LLMsPage:
             self.LLM.import_LLM() # import model to file in directory
             output = self.get_output(model_path) # get output from Hugging Face
             self.LLMInput.output_text.insert("1.0", model_path + " was successfully imported! \n " + output)
-
-            self.disable_output(True)
-            self.disable_input(False)
+            self.LLMInput.disable_input(False)
+            self.LLMInput.disable_output(True)
 
         except Exception as e:
             self.LLMInput.output_text.insert("1.0", model_path + " could not be imported. Try again.")
-            self.disable_output(True)
-            self.disable_input(False)
+            self.LLMInput.disable_input(False)
+            self.LLMInput.disable_output(True)
             print(f"Error handling LLM: {str(e)}")
 
-        self.LLMList.write_list(self.LLMList.get_models())
+        self.LLMInput.LLMList.write_list(self.LLMInput.LLMList.get_models())
 
-    def disable_input(self, disable):
-        if disable:
-            self.LLMInput.input_text.configure(state="disable")
-            self.LLMInput.import_button.configure(state="disable")
-        else:
-            self.LLMInput.input_text.configure(state="normal")
-            self.LLMInput.import_button.configure(state="normal")
-
-    def disable_output(self, disable):
-        if disable:
-            self.LLMInput.output_text.configure(state="disable")
-        else:
-            self.LLMInput.output_text.configure(state="normal")
 
     ### revisit this for later iterations
     def get_output(self, model_path):
@@ -118,6 +105,14 @@ class LLMsPage:
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
         return self.term_output
+
+    def create_scrollbar(self):
+        # create scrollbar
+        self.scrollbar = tk.Scrollbar(self.root, orient="vertical")
+        self.scrollbar.grid(row=0, column=1, sticky="ns")
+        self.scrollbar.config(command=self.canvas.yview)
+
+
 
 
 

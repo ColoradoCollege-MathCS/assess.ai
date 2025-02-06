@@ -3,37 +3,60 @@ import os
 from components.rounded_frame import RoundedFrame
 
 class LLMList(tk.Frame):
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, root, **kwargs):
         super().__init__(parent, bg="#D2E9FC", **kwargs)
+        self.root = root
+        self.root = root
         self.setup_list_area()
 
     def setup_list_area(self):
         self.grid_columnconfigure(0, weight=1)
 
-        # Container frame for list
-        self.container = tk.Frame(self, bg="#D2E9FC")
-        self.container.grid(row=0, column=0, sticky="ew", padx=20, pady=15)
-        self.container.grid_columnconfigure(0, weight=1)
-
         # list container with rounded corners
-        self.list_container = RoundedFrame(self.container, "#FFFFFF", radius=50)
-        self.list_container.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+        self.list_container = RoundedFrame(self, "#FFFFFF", radius=50)
+        self.list_container.grid(row=0, column=0, sticky="nsew", padx=(0, 5), pady=(5,5))
         self.list_container.grid_columnconfigure(0, weight=1)
+        self.list_container.grid_rowconfigure(0, weight=1)
+
+        # Frame for LLM list + scrollbar
+        self.scrolllist_frame = tk.Frame(self.list_container, bg = "white")
+        self.scrolllist_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.scrolllist_frame.grid_columnconfigure(0, weight=1)
+        self.scrolllist_frame.grid_rowconfigure(0, weight=1)
 
         # LLM list area
         self.list = tk.Listbox(
-            self.list_container,
-            height=20,
-            width=20,
+            self.scrolllist_frame,
+            height=15,
+            width=30,
             font=("SF Pro Text", 14),
             bd=0,
             bg="white",
             highlightthickness=0,
             relief="flat"
         )
-        self.list.grid(row=0, column=0, sticky="ew", padx=20, pady=2)
+        self.list.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+        # LLM list scrollbar
+        self.list_scrollbar = tk.Scrollbar(self.scrolllist_frame, orient="vertical", command=self.list.yview)
+        self.list_scrollbar.grid(row=0, column=1, sticky="ns")
+
+        self.list.configure(yscrollcommand=self.list_scrollbar.set)
+
+        # scroll binding
+        #self.list_frame.bind("<Configure>", self.update_scroll)
+        self.list.bind("<MouseWheel>", self.mouse_scroll)# bind to mouse
+        # selection bind
+        self.list.bind("<ButtonRelease-1>", self.model_selected)
+
         self.write_list(self.get_models())
 
+
+    def model_selected(self, event):
+        selected_model = self.list.curselection()
+        if selected_model:
+            model_path = self.list.get(selected_model)
+            self.root.show_page("model", model_path)
 
     def get_models(self):
         folder_list = []
@@ -53,7 +76,14 @@ class LLMList(tk.Frame):
             count += 1
             self.list.insert(count, model)
 
-
+    def mouse_scroll(self, event):
+        if event.delta:
+            self.list.yview_scroll(-1 * (event.delta // 120), "units")
+        elif event.num ==4:
+            self.list.yview_scroll(-1, "units")
+        elif event.num ==5:
+            self.list.yview_scroll(1, "units")
+        return "break"
 
 
 
