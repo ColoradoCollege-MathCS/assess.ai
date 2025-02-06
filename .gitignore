@@ -7,3 +7,4 @@ medscribe_env/
 chat_data/
 finetunedmodels/
 src/geval/mistral-7b-instruct-v0.2.Q4_K_M.gguf
+eval_files/

@@ -33,7 +33,7 @@ def download_file(url, destination):
 def main():
     # Define paths
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    geval_dir = os.path.join(current_dir, 'src', 'geval')
+    geval_dir = os.path.join(current_dir, 'geval')
     model_path = os.path.join(geval_dir, 'mistral-7b-instruct-v0.2.Q4_K_M.gguf')
     
     # Hugging Face model URL

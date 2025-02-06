@@ -37,7 +37,7 @@ class Navbar(tk.Frame):
         logo_container.pack(fill="x", pady=(20, 30))
         
         try:
-            logo_path = Path(__file__).parent.parent / "assets" / "logo.jpeg"
+            logo_path = Path(__file__).parent.parent / "assets" / "logo.png"
             
             logo_img = Image.open(logo_path)
             logo_width = 180  
