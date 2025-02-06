@@ -3,14 +3,19 @@ from tkinter import ttk
 import threading
 from utils.evaluation import Evaluator
 from components.evaluation_form import EvaluationForm
+from components.evaluation_visualizer import EvaluationVisualizer
 
 class EvaluationPage:
     def __init__(self, root):
         self.root = root
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         # Run method right below 
 >>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
+=======
+        self.visualizer = None
+>>>>>>> d56d1de2de58700d2f6094e5ed4f1e5a0c3f81cc
         self.setup_page()
         
     def setup_page(self):
@@ -31,23 +36,38 @@ class EvaluationPage:
         
         ttk.Separator(content, orient="horizontal").grid(row=1, column=0, sticky="ew", padx=20)
         
+        # Initialize visualizer before form
+        self.visualizer = EvaluationVisualizer(content)
+        
         self.form = EvaluationForm(content, self.handle_start_evaluation)
         
-    def format_metrics(self, scores):
-        return (
-            f"ROUGE-1: {scores.get('rouge1', 0):.4f}\n"
-            f"ROUGE-2: {scores.get('rouge2', 0):.4f}\n"
+    def format_metrics(self, scores, use_geval=True):
+        metrics = (
+            f"ROUGE-1: {scores.get('rouge1', 0):.4f}, "
+            f"ROUGE-2: {scores.get('rouge2', 0):.4f}, "
             f"ROUGE-L: {scores.get('rougeL', 0):.4f}\n"
-            f"BLEU: {scores.get('bleu', 0):.4f}\n"
-            f"METEOR: {scores.get('meteor', 0):.4f}\n"
+            f"BLEU: {scores.get('bleu', 0):.4f}, "
+            f"METEOR: {scores.get('meteor', 0):.4f}, "
             f"BERTScore F1: {scores.get('bert_f1', 0):.4f}"
         )
         
-    def run_evaluation(self, dataset_path, model_path, start_idx, end_idx):
+        if use_geval:
+            # Add the geval metrics to the traditional metrics
+            metrics += (
+                f"\nG-Eval Metrics:\n"
+                f"  Coherence: {scores.get('coherence', 0):.4f}\n"
+                f"  Consistency: {scores.get('consistency', 0):.4f}\n"
+                f"  Fluency: {scores.get('fluency', 0):.4f}\n"
+                f"  Relevance: {scores.get('relevance', 0):.4f}"
+            )
+            
+        return metrics
+        
+    def run_evaluation(self, dataset_path, model_path, start_idx, end_idx, use_geval=True):
         try:
-            # Initialize evaluator
+            # Initialize evaluator with G-EVAL flag
             self.form.update_status("Loading model...")
-            evaluator = Evaluator(model_path)
+            evaluator = Evaluator(model_path, use_geval)
             
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -76,13 +96,15 @@ class EvaluationPage:
                 successful = progress_info['successful']
                 scores = progress_info.get('scores', {})
                 
-                # Update status with current progress and all metrics
+                # Update status with current progress and metrics
                 status_text = (
                     f"Current sample: {start_idx + current}/{end_idx} "
-                    f"(Processed {successful} successfully)\n\n"
-                    f"Current Metrics:\n{self.format_metrics(scores)}\n"
+                    f"(Processed {successful} successfully)"
+                    f"\n{self.format_metrics(scores, use_geval)}\n"
                 )
+                # Update logs
                 self.root.after(0, lambda: self.form.update_status(status_text))
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
                 
@@ -92,6 +114,10 @@ class EvaluationPage:
 >>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
 =======
 >>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
+=======
+                # Update graph
+                self.root.after(0, lambda: self.visualizer.update_plots(scores, use_geval))
+>>>>>>> d56d1de2de58700d2f6094e5ed4f1e5a0c3f81cc
             
             # Run evaluation
             final_scores = evaluator.evaluate(
@@ -103,17 +129,25 @@ class EvaluationPage:
             final_status = (
                 f"\nEvaluation complete for samples {start_idx}-{end_idx}!\n"
                 f"Successfully processed {final_scores['processed_samples']} out of {final_scores['total_samples']} samples\n\n"
-                f"Final Metrics:\n{self.format_metrics(final_scores)}\n"
+                f"Final Metrics:\n{self.format_metrics(final_scores, use_geval)}\n"
             )
+            # Update log with final message
             self.root.after(0, lambda: self.form.update_status(final_status))
+            # Reset start button
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
+            
+            # Show final radar chart
+            self.root.after(0, lambda: self.visualizer.plot_final_radar(final_scores, use_geval))
             
         except Exception as e:
             error_msg = f"Error: {str(e)}"
             self.root.after(0, lambda: self.form.update_status(error_msg, is_error=True))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
-    def handle_start_evaluation(self, dataset_path, model_path, start_idx, end_idx):
+    def handle_start_evaluation(self, dataset_path, model_path, start_idx, end_idx, use_geval=True):
+        # Clear previous plots
+        self.visualizer.clear_plots()
+        
         # Disable start button while evaluation is running
         self.form.start_btn.config(state="disabled")
         
@@ -124,10 +158,14 @@ class EvaluationPage:
         thread = threading.Thread(
             target=self.run_evaluation,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             # Passes parameters needed to run evaluation
 >>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
             args=(dataset_path, model_path, start_idx, end_idx),
+=======
+            args=(dataset_path, model_path, start_idx, end_idx, use_geval),
+>>>>>>> d56d1de2de58700d2f6094e5ed4f1e5a0c3f81cc
             daemon=True
         )
         thread.start()

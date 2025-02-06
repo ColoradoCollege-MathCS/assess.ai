@@ -3,7 +3,7 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 def download_model():
     print("Downloading FLAN-T5-small model...")
-    model_name = "google/flan-t5-small"
+    model_name = "google/pegasus-xsum"
     
     # Download tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -11,7 +11,7 @@ def download_model():
     
     # Save model and tokenizer locally
     print("Saving model locally...")
-    save_path = "../model_files/flan-t5"
+    save_path = "../model_files/pegasus"
     tokenizer.save_pretrained(save_path)
     model.save_pretrained(save_path)
 =======

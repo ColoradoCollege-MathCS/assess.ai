@@ -8,8 +8,12 @@ medscribe_env/
 chat_data/
 <<<<<<< HEAD
 finetunedmodels/
+<<<<<<< HEAD
 =======
 .env/
 finetunedmodels/
 .env/
 >>>>>>> a0610ba1835c74dcf76d954652a1a43adb5e15a1
+=======
+src/geval/mistral-7b-instruct-v0.2.Q4_K_M.gguf
+>>>>>>> d56d1de2de58700d2f6094e5ed4f1e5a0c3f81cc

@@ -28,8 +28,9 @@ from .eval_scores import ScoreCalculator, prevent_download, setup_nltk_paths
 >>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
 
 class Evaluator:
-    def __init__(self, model_path):
+    def __init__(self, model_path, use_geval=True):
         self.model_path = Path(model_path)
+        self.use_geval = use_geval
         # Use CPU
         self.device = torch.device('cpu')
         
@@ -74,6 +75,7 @@ class Evaluator:
         
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         # Initialize plotting variables
         self.figure = None
         self.ax = None
@@ -81,15 +83,28 @@ class Evaluator:
         self.rouge_scores = []
 =======
         # Dict to store scores
+=======
+        # Dictionary to store scores - include G-EVAL metrics only if enabled
+>>>>>>> d56d1de2de58700d2f6094e5ed4f1e5a0c3f81cc
         self.scores = {
             'rouge1': [],
             'rouge2': [],
             'rougeL': [],
             'bleu': [],
             'meteor': [],
-            'bert_f1': []
+            'bert_f1': [],
         }
+<<<<<<< HEAD
 >>>>>>> 18b5a80842d2d547646a5a0f221bdf64cdc5890d
+=======
+        if self.use_geval:
+            self.scores.update({
+                'coherence': [],
+                'consistency': [],
+                'fluency': [],
+                'relevance': []
+            })
+>>>>>>> d56d1de2de58700d2f6094e5ed4f1e5a0c3f81cc
         self.sample_indices = []
 
     def evaluate(self, test_data, progress_callback=None):
@@ -113,13 +128,13 @@ class Evaluator:
                         print(f"Empty reference for sample {idx}")
                         continue
                     
-                    # Calculate all metrics with safe defaults using ScoreCalculator
+                    # Calculate traditional metrics
                     rouge_scores = self.score_calculator.rouge_calculator(reference, generated_summary)
                     bleu_score = self.score_calculator.bleu_calculator(reference, generated_summary)
                     meteor_score = self.score_calculator.meteor_calculator(reference, generated_summary)
                     bert_scores = self.score_calculator.bertscore_calculator(reference, generated_summary)
                     
-                    # Combine all scores
+                    # Initialize sample scores with traditional metrics
                     sample_scores = {
                         'rouge1': rouge_scores['rouge1'],
                         'rouge2': rouge_scores['rouge2'],
@@ -128,6 +143,16 @@ class Evaluator:
                         'meteor': meteor_score,
                         'bert_f1': bert_scores['f1']
                     }
+                    
+                    # Add G-EVAL metrics if enabled
+                    if self.use_geval:
+                        g_eval_scores = self.score_calculator.g_eval(reference, generated_summary)
+                        sample_scores.update({
+                            'coherence': g_eval_scores.get('coherence', {}).get('average', 0),
+                            'consistency': g_eval_scores.get('consistency', {}).get('average', 0),
+                            'fluency': g_eval_scores.get('fluency', {}).get('average', 0),
+                            'relevance': g_eval_scores.get('relevance', {}).get('average', 0)
+                        })
                     
                     # Store scores
                     all_scores.append(sample_scores)
@@ -159,6 +184,32 @@ class Evaluator:
                 'processed_samples': successful_samples,
                 'total_samples': total_samples
             })
+            
+            # Write results to file
+            data_file = open("evaluation_results.txt", "a")
+            try:
+                data_file.write("Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0." + "\n")
+                data_file.write(f"Processed Samples: {successful_samples}\n")
+                data_file.write(f"Average Scores:\n")
+                data_file.write(f"Bleu Score: {final_scores['bleu']}\n")
+                data_file.write(f"Rouge Scores:\n")
+                data_file.write(f"  ROUGE-1: {final_scores['rouge1']}\n")
+                data_file.write(f"  ROUGE-2: {final_scores['rouge2']}\n")
+                data_file.write(f"  ROUGE-L: {final_scores['rougeL']}\n")
+                data_file.write(f"Meteor Score: {final_scores['meteor']}\n")
+                data_file.write(f"BERTScore F1: {final_scores['bert_f1']}\n")
+                
+                if self.use_geval:
+                    data_file.write(f"G-Evaluation Scores:\n")
+                    data_file.write(f"  Coherence: {final_scores.get('coherence', 0)}\n")
+                    data_file.write(f"  Consistency: {final_scores.get('consistency', 0)}\n")
+                    data_file.write(f"  Fluency: {final_scores.get('fluency', 0)}\n")
+                    data_file.write(f"  Relevance: {final_scores.get('relevance', 0)}\n")
+
+            except Exception as e:
+                print(f"Unable to write in file: {e}")
+            finally:
+                data_file.close()
             
             return final_scores
             

@@ -1,4 +1,4 @@
-# Assess.ai
+# AssessAI
 Team Members: Ronan Takizawa, Kaylie Stuteville, Willa Polman, Anna Vu.
 
 AssessAI is a desktop software tool designed to help users evaluate and test the performance of large language models (LLMs) specifically in summarizing custom datasets. The tool allows clients to upload their datasets and assess how well various LLMs summarize their content. With this, users can determine how effectively these models could potentially serve their own projects.
@@ -27,10 +27,10 @@ pip install -r requirements.txt
 
 ## Setup and Usage
 
-1. Download the required model first (this is required before first run):
+1. Download the required model first (this is required before first run to do G-EVAL):
 ```bash
 cd src
-python download_pegasus.py
+python download_mistral.py
 ```
 
 2. Start the application:
