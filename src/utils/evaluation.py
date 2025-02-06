@@ -1,8 +1,6 @@
 import torch
-import nltk
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from pathlib import Path
-from datetime import datetime
 from .data_loader import load_dataset
 from .eval_scores import ScoreCalculator
 
@@ -12,7 +10,8 @@ class Evaluator:
         self.use_geval = use_geval
         # Use CPU
         self.device = torch.device('cpu')
-        # Store all logs to save for later
+        
+        # Initialize log storage
         self.progress_logs = []
         
         try:
@@ -51,15 +50,7 @@ class Evaluator:
             })
         self.sample_indices = []
 
-    def save_logs(self, final_scores, successful_samples, total_samples):
-        # Create timestamp and get model name
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        model_name = self.model_path.stem
-        
-        # Create directory structure
-        log_dir = Path("../eval_files") / f"{timestamp}_{model_name}"
-        log_dir.mkdir(parents=True, exist_ok=True)
-        
+    def save_logs(self, log_dir, final_scores, successful_samples, total_samples):
         # Create the log file
         log_file = log_dir / "logs.txt"
         
@@ -106,15 +97,13 @@ class Evaluator:
                 try:
                     generated_summary = self.generate_summary(item.get('input_text', ''))
                     if not generated_summary:
-                        log_msg = f"Empty generated summary for sample {idx}"
-                        print(log_msg)
+                        print(f"Empty generated summary for sample {idx}")
                         continue
                     
                     reference = item.get('target_text', '')
                     if not reference:
-                        log_msg = f"Empty reference for sample {idx}"
-                        continue
-                    
+                        print(f"Empty reference for sample {idx}")
+                        raise 
                     # Calculate traditional metrics
                     rouge_scores = self.score_calculator.rouge_calculator(reference, generated_summary)
                     bleu_score = self.score_calculator.bleu_calculator(reference, generated_summary)
@@ -156,9 +145,28 @@ class Evaluator:
                         progress_callback(progress)
                         
                         # Store progress log
-                        log_msg = f"Sample {idx + 1}/{total_samples} (Successful: {successful_samples})"
-                        self.progress_logs.append(log_msg)
-                        self.progress_logs.append(f"Scores: {sample_scores}\n")
+                        log_msg = [
+                            f"Sample {idx + 1}/{total_samples} (Successful: {successful_samples})",
+                            f"Traditional Metrics:",
+                            f"  ROUGE-1: {sample_scores['rouge1']:.4f}",
+                            f"  ROUGE-2: {sample_scores['rouge2']:.4f}",
+                            f"  ROUGE-L: {sample_scores['rougeL']:.4f}",
+                            f"  BLEU: {sample_scores['bleu']:.4f}",
+                            f"  METEOR: {sample_scores['meteor']:.4f}",
+                            f"  BERTScore F1: {sample_scores['bert_f1']:.4f}"
+                        ]
+                        
+                        if self.use_geval:
+                            log_msg.extend([
+                                f"G-Eval Metrics:",
+                                f"  Coherence: {sample_scores.get('coherence', 0):.4f}",
+                                f"  Consistency: {sample_scores.get('consistency', 0):.4f}",
+                                f"  Fluency: {sample_scores.get('fluency', 0):.4f}",
+                                f"  Relevance: {sample_scores.get('relevance', 0):.4f}"
+                            ])
+                        
+                        self.progress_logs.extend(log_msg)
+                        self.progress_logs.append("")  # Add blank line between samples
                         
                 except Exception as e:
                     print(f"Error processing sample {idx}: {str(e)}")
@@ -176,9 +184,6 @@ class Evaluator:
                 'processed_samples': successful_samples,
                 'total_samples': total_samples
             })
-            
-            # Save all logs to file
-            self.save_logs(final_scores, successful_samples, total_samples)
             
             return final_scores
             

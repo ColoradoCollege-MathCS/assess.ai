@@ -1,5 +1,10 @@
 # Changelog
 
+## 2-6
+- Added GEVAL
+- Added bar chart and radar chart on eval page
+- Eval logs and graphs are savable
+
 ## 2-3
 - Removed Chat
 - Added most evaluations (ROUGE, BLEU, METEOR)

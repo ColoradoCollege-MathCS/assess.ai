@@ -1,5 +1,6 @@
 
 
+from pathlib import Path
 import tkinter as tk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -389,3 +390,37 @@ class EvaluationVisualizer:
             self.ax_radar_geval.set_visible(False)
             
         self.canvas_radar.draw()
+
+    def save_plots(self, save_dir):
+        try:
+            # Ensure directory exists
+            save_dir = Path(save_dir)
+            save_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Save traditional metrics progress plot
+            self.fig_traditional.savefig(
+                save_dir / 'traditional_metrics_progress.png',
+                bbox_inches='tight',
+                dpi=300,
+                facecolor='white'
+            )
+            
+            # Save G-EVAL progress plot if it exists
+            if self.plot_frame_geval.winfo_ismapped():
+                self.fig_geval.savefig(
+                    save_dir / 'geval_metrics_progress.png',
+                    bbox_inches='tight',
+                    dpi=300,
+                    facecolor='white'
+                )
+            
+            # Save radar plot if it exists
+            if self.final_frame.winfo_ismapped():
+                self.fig_radar.savefig(
+                    save_dir / 'final_radar_plot.png',
+                    bbox_inches='tight',
+                    dpi=300,
+                    facecolor='white'
+                )
+        except Exception as e:
+            print(f"Error saving plots: {str(e)}")
