@@ -1,0 +1,25 @@
+=== EVALUATION PROGRESS LOGS ===
+
+Sample 1/1 (Successful: 1)
+Scores: {'rouge1': 0.16666666666666669, 'rouge2': 0.05714285714285714, 'rougeL': 0.1111111111111111, 'bleu': 0.09954216279368022, 'meteor': 0.15, 'bert_f1': 0.43678244948387146, 'coherence': 3.62, 'consistency': 4.6, 'fluency': 3.0, 'relevance': 5.0}
+
+
+=== FINAL EVALUATION RESULTS ===
+
+Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0.
+Processed Samples: 1
+Total Samples: 1
+
+Average Scores:
+Bleu Score: 0.09954216279368022
+Rouge Scores:
+  ROUGE-1: 0.16666666666666669
+  ROUGE-2: 0.05714285714285714
+  ROUGE-L: 0.1111111111111111
+Meteor Score: 0.15
+BERTScore F1: 0.43678244948387146
+G-Evaluation Scores:
+  Coherence: 3.62
+  Consistency: 4.6
+  Fluency: 3.0
+  Relevance: 5.0
