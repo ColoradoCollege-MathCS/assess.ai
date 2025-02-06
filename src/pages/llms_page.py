@@ -4,8 +4,8 @@ import io
 from tkinter import ttk
 from utils.llm import LLM
 from components import (
-    LLMInput,
     TitleFrame,
+    LLMInput,
     LLMList
 )
 

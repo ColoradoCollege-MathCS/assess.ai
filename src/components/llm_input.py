@@ -2,6 +2,7 @@ import tkinter as tk
 from components.rounded_frame import RoundedFrame
 from components.llm_list import LLMList
 
+
 class LLMInput(tk.Frame):
     def __init__(self, parent, root, send_callback, **kwargs):
         super().__init__(parent, bg="#D2E9FC", **kwargs)
@@ -16,27 +17,27 @@ class LLMInput(tk.Frame):
         self.container = tk.Frame(self, bg="#D2E9FC")
         self.container.grid(row=0, column=0, sticky="nsew", padx=0, pady=15)
         self.container.grid_rowconfigure(0, weight=1)
-        self.container.grid_columnconfigure(0, weight=1) # for input frame
-        self.container.grid_columnconfigure(1, weight=0) # for output frame
+        self.container.grid_columnconfigure(0, weight=1)  # for input frame
+        self.container.grid_columnconfigure(1, weight=0)  # for output frame
 
         # Input + button container
         self.inputbutt_frame = tk.Frame(self.container, bg="#D2E9FC")
-        self.inputbutt_frame.grid(row=1, column=0, sticky="ew", padx=(5,10), pady=(20,5))
+        self.inputbutt_frame.grid(row=1, column=0, sticky="ew", padx=(5, 10), pady=(20, 5))
         self.inputbutt_frame.grid_columnconfigure(0, weight=1)
         self.inputbutt_frame.grid_columnconfigure(1, weight=0)
 
         # Input container with rounded corners
         self.input_container = RoundedFrame(self.inputbutt_frame, "#FFFFFF", radius=50)
-        self.input_container.grid(row=0, column=0, sticky="nsew", padx=10, pady=(20,10))
+        self.input_container.grid(row=0, column=0, sticky="nsew", padx=10, pady=(20, 10))
         self.input_container.grid_columnconfigure(0, weight=1)
 
         # Output + LLM list container
         self.outputlist_frame = tk.Frame(self.container, bg="#D2E9FC")
-        self.outputlist_frame.grid(row=2, column=0, sticky="ew", padx=(5,10), pady=(20,5))
+        self.outputlist_frame.grid(row=2, column=0, sticky="ew", padx=(5, 10), pady=(20, 5))
         self.outputlist_frame.grid_rowconfigure(0, weight=1)
         self.outputlist_frame.grid_rowconfigure(1, weight=1)
-        self.outputlist_frame.columnconfigure(0, weight=1) # for output box
-        self.outputlist_frame.columnconfigure(1, weight=1) # for list box
+        self.outputlist_frame.columnconfigure(0, weight=1)  # for output box
+        self.outputlist_frame.columnconfigure(1, weight=1)  # for list box
 
         # Output container frame with rounded corners
         self.output_container = RoundedFrame(self.outputlist_frame, "#FFFFFF", radius=50)
@@ -79,7 +80,7 @@ class LLMInput(tk.Frame):
         )
 
         self.input_text.tag_configure("center", justify='center')
-        self.input_text.insert("1.0", "Insert model path here") # default text
+        self.input_text.insert("1.0", "Insert model path here")  # default text
         self.input_text.tag_add("center", "1.0", "end")
         self.input_text.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
         self.input_container.grid_rowconfigure(0, weight=1)
@@ -95,7 +96,7 @@ class LLMInput(tk.Frame):
             highlightthickness=0,
             cursor="hand2"
         )
-        self.import_button.grid(row=0, column=1, sticky="e", padx=(2,10), pady=20)
+        self.import_button.grid(row=0, column=1, sticky="e", padx=(2, 10), pady=20)
 
         # Draw import button
         padding = 10
@@ -136,7 +137,7 @@ class LLMInput(tk.Frame):
         string.set("LLMs")
 
         # "LLMs" area
-        self.llm_list = tk.Label(
+        self.llm_listbox = tk.Label(
             self.outputlist_frame,
             textvariable=string,
             bg="#D2E9FC",
@@ -145,7 +146,7 @@ class LLMInput(tk.Frame):
             anchor="w",
             justify="left"
         )
-        self.llm_list.grid(row=0, column=1, sticky="w", padx=20, pady=(5, 5))
+        self.llm_listbox.grid(row=0, column=1, sticky="w", padx=20, pady=(5, 5))
 
         # Draw LLM status area
         self.output_text = tk.Text(
@@ -172,20 +173,20 @@ class LLMInput(tk.Frame):
             self.input_text.insert("1.0", "Insert model path here")
             self.input_text.tag_add("center", "1.0", "end")
 
-    def handle_import(self, event = None):
+    def handle_import(self, event=None):
         self.disable_output(False)
         self.disable_input(True)
 
         model_path = self.get_input()
-        print ("Clicked!")
+        print("Clicked!")
         if model_path == "Insert model path here":
-                self.output_text.insert ("1.0", "Please insert model path")
-                return
+            self.output_text.insert("1.0", "Please insert model path")
+            return
         elif model_path:
             self.clear_input()
             self.send_callback(model_path)
         else:
-            self.LLMInput.output_text.insert("1.0", "Please insert model path")
+            self.output_text.insert("1.0", "Please insert model path")
             return
 
     def disable_input(self, disable):
@@ -208,10 +209,3 @@ class LLMInput(tk.Frame):
     def clear_input(self):
         self.input_text.delete("1.0", "end")
         self.input_text.focus()
-
-
-
-
-
-
-
