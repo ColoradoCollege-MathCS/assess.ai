@@ -8,3 +8,13 @@ Rouge Scores:
   ROUGE-L: 0.1736293883800349
 Meteor Score: 0.213
 BERTScore F1: 0.5105716049671173
+Here are the metrics of your summarized dataset versus the original copy. A score closer to 1.0 is perfect and the worst is 0.0.
+Processed Samples: 3
+Average Scores:
+Bleu Score: 0.21384787974026898
+Rouge Scores:
+  ROUGE-1: 0.20068180749518036
+  ROUGE-2: 0.09303700725739245
+  ROUGE-L: 0.14729236218868041
+Meteor Score: 0.20666666666666667
+BERTScore F1: 0.4771888057390849

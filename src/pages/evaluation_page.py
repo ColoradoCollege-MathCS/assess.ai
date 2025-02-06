@@ -29,10 +29,10 @@ class EvaluationPage:
         
         ttk.Separator(content, orient="horizontal").grid(row=1, column=0, sticky="ew", padx=20)
         
-        self.form = EvaluationForm(content, self.handle_start_evaluation)
-        
-        # Initialize visualizer after form setup
+        # Initialize visualizer before form
         self.visualizer = EvaluationVisualizer(content)
+        
+        self.form = EvaluationForm(content, self.handle_start_evaluation)
         
     def format_metrics(self, scores, use_geval=True):
         metrics = (
