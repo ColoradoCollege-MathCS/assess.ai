@@ -1,5 +1,9 @@
 # Changelog
 
+## 2-10
+- Added cleaner LLM page
+- Eval graph saves fully
+
 ## 2-6
 - Added GEVAL
 - Added bar chart and radar chart on eval page

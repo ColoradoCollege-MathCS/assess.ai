@@ -1,10 +1,7 @@
-# Import required libraries
 from torch.utils.data import Dataset
 import json
 from pathlib import Path
 import csv
-
-# Object to convert text dataset into an object accessible by Pytorch's Dataloader
 class TextDataset(Dataset):
     def __init__(self, data, tokenizer, max_length=256):
         self.data = data
@@ -51,7 +48,7 @@ def load_dataset(data_path, start_idx=0, end_idx=100):
     data_path = Path(data_path)
     if not data_path.exists():
         raise FileNotFoundError(f"Data file not found at {data_path}")
-
+    
     file_extension = data_path.suffix.lower()
     
     try:
@@ -78,28 +75,45 @@ def load_dataset(data_path, start_idx=0, end_idx=100):
                         })
                     
             elif file_extension == '.txt':
-                lines = f.readlines()
-                for idx in range(start_idx, min(end_idx, len(lines)), 2):
-                    if idx + 1 >= len(lines):
+                lines = [line.strip() for line in f.readlines() if line.strip()]  # Remove empty lines
+                
+                current_idx = 0
+                while current_idx < len(lines):
+                    # Find next input/target pair
+                    while current_idx < len(lines) and not any(lines[current_idx].startswith(prefix) for prefix in ['INPUT:', 'INPUT :']):
+                        current_idx += 1
+                    if current_idx >= len(lines):
                         break
                         
-                    input_line = lines[idx].strip()
-                    target_line = lines[idx + 1].strip()
+                    input_line = lines[current_idx]
+                    target_line = lines[current_idx + 1] if current_idx + 1 < len(lines) else None
+                    # Check if we have a valid input/target pair
+                    if (target_line and 
+                        any(input_line.startswith(prefix) for prefix in ['INPUT:', 'INPUT :']) and 
+                        any(target_line.startswith(prefix) for prefix in ['TARGET:', 'TARGET :'])):
+                        
+                        # Extract the text after the prefix
+                        input_text = input_line.split(':', 1)[1].strip()
+                        target_text = target_line.split(':', 1)[1].strip()
+                        
+                        if start_idx <= len(data) < end_idx:
+                            data.append({
+                                'input_text': input_text,
+                                'target_text': target_text
+                            })
                     
-                    if input_line.startswith('INPUT:') and target_line.startswith('TARGET:'):
-                        data.append({
-                            'input_text': input_line[6:].strip(),
-                            'target_text': target_line[7:].strip()
-                        })
+                    current_idx += 2
             
             else:
                 raise ValueError(f"Unsupported file format: {file_extension}")
+                
         if not data: #There was no data found
             raise ValueError("No valid data found in the specified range. Please check your dataset or specified indices")
             
         # Validate data structure
         if not all(isinstance(item, dict) and 'input_text' in item and 'target_text' in item for item in data):
             raise ValueError("Data must contain 'input_text' and 'target_text' fields")
+            
         return data
         
     except Exception as e:
