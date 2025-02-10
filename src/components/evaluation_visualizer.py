@@ -401,13 +401,13 @@ class EvaluationVisualizer:
             original_visible_samples = self.visible_samples
             original_traditional_pos = self.current_traditional_pos
             original_geval_pos = self.current_geval_pos
-            
-            # Create new figure for full traditional metrics
-            full_fig_traditional = Figure(figsize=(16, 4))  # Larger figure for all samples
-            full_ax_traditional = full_fig_traditional.add_axes([0.1, 0.15, 0.85, 0.75])  # Adjusted axes for better visibility
-            
+
             # Get total number of samples
             n_samples = len(next(iter(self.metrics_history.values())))
+            
+            # Create new figure for full traditional metrics
+            full_fig_traditional = Figure(figsize=(n_samples, 4))  # Larger figure for all samples
+            full_ax_traditional = full_fig_traditional.add_axes([0.1, 0.15, 0.85, 0.75])  # Adjusted axes for better visibility
             
             # Temporarily set visible_samples to show all data
             self.visible_samples = n_samples
