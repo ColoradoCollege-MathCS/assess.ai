@@ -28,12 +28,12 @@ class LLM:
         # detokenize text
         return self.tokenizer.batch_decode(summarized_text)
 
-    def download_LLM(self):
+    def import_LLM(self):
         # save model and tokenizer
         path_name = f"../model_files/{self.model_id.replace('/', '_')}"
         self.model.save_pretrained("../model_files/" + path_name)
         self.tokenizer.save_pretrained("../model_files/" + path_name)
-        print(self.model_id + " was successfully downloaded!")
+        print(self.model_id + " was successfully imported!")
 
     def load_LLM(self):
         # check model type using AutoConfig
