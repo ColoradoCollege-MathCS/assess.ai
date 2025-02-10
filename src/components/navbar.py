@@ -5,11 +5,10 @@ import tkinter as tk
 # Navigation items
 nav_items = [
     ("Home","home"),
-    ("Chat", "chat"),
     ("Evaluations", "evaluations"),
     ("LLMs", "llms"),
     ("Finetune", "finetune"),
-    ("Projects", "projects")
+    ("Datasets", "datasets")
 ]
 
 class Navbar(tk.Frame):
@@ -17,7 +16,7 @@ class Navbar(tk.Frame):
         super().__init__(parent, bg="#FFFFFF", **kwargs)
         # Set callback function
         self.show_page_callback = show_page_callback
-        self.current_page = "chat"  # Default page
+        self.current_page = "home"  # Default page
         self.buttons = {}  # Store button references
         self.logo_photo = None  
         self._setup_navbar()

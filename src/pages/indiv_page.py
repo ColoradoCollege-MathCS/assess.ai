@@ -2,20 +2,18 @@ import sys
 import tkinter as tk
 import io
 from tkinter import ttk
-from subprocess import run
-from utils.llm import LLM
 from components import (
-    TitleFrame,
+    LLMDetails
 )
 
 
 class LLMPage:
-    def __init__(self, root, show_page_callback):
-        self.show_page_callback = show_page_callback
-        self.LLM = None
+    def __init__(self, root, llm):
+        self.LLM = llm
         self.root = root
         self.container = tk.Frame(self.root, bg="#D2E9FC")
         self.container.grid(row=1, column=1, sticky="nsew")
+
         self.setup_page()
 
     def setup_page(self):
@@ -33,9 +31,7 @@ class LLMPage:
 
     def _configure_grid(self):
         """Configure grid layout"""
-        self.container.grid_rowconfigure(0, weight=0)  # Title
-        self.container.grid_rowconfigure(1, weight=0)  # LLM Name
-        self.container.grid_rowconfigure(2, weight=0)  # LLM Details
+        self.container.grid_rowconfigure(0, weight=1)  # LLM Name + Details
         self.container.grid_columnconfigure(0, weight=1)
 
     def _setup_styles(self):
@@ -46,13 +42,11 @@ class LLMPage:
         self.root.bind('<Escape>', lambda e: self.root.destroy())
 
     def _initialize_components(self):
-        # Title
-        self.title_frame = TitleFrame(self.container)
-        self.title_frame.grid(row=0, column=0, sticky="ew", pady=(0,50))
 
-        # LLM Name
+        # Name + Details
+        self.details_frame = LLMDetails(self.container, self.LLM)
+        self.details_frame.grid(row=0, column=0, sticky="ew", pady=(0,50))
 
-        # LLM Details
 
 
 

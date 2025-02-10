@@ -1,13 +1,15 @@
 import tkinter as tk
+from tkinter import *
 import os
 from components.rounded_frame import RoundedFrame
-#from main import AssessAIGUI
-
+from pages.indiv_page import LLMPage
 
 class LLMList(tk.Frame):
     def __init__(self, parent, root, **kwargs):
         super().__init__(parent, bg="#D2E9FC", **kwargs)
-        #self.main_gui = AssessAIGUI(root)  # instance of AssessAIGUI
+        self.root = root
+        self.selected_model = None
+        self.detail_page = None
         self.setup_list_area()
 
     def setup_list_area(self):
@@ -41,7 +43,6 @@ class LLMList(tk.Frame):
         # LLM list scrollbar
         self.list_scrollbar = tk.Scrollbar(self.scrolllist_frame, orient="vertical", command=self.list.yview)
         self.list_scrollbar.grid(row=0, column=1, sticky="ns")
-
         self.list.configure(yscrollcommand=self.list_scrollbar.set)
 
         # scroll binding
@@ -53,12 +54,21 @@ class LLMList(tk.Frame):
         self.write_list(self.get_models())
 
     def model_selected(self, event):
-        selected_model = self.list.curselection()
-        if selected_model:
-            model_path = self.list.get(selected_model)
+        selection = self.list.curselection()
+        if selection:
+            self.selected_model = self.list.get(selection)
+            self.create_window(self.selected_model)
 
-            #self.main_gui.show_page("model", model_path)
-            return
+    def create_window(self, model_name):
+        # main window object
+        new_win = Toplevel(self.root) # create toplevel widget
+
+        # set title + dimensions
+        new_win.title(model_name)
+        new_win.geometry("500x500")
+
+        # populate window with model specific material
+        self.detail_page = LLMPage(new_win, self.selected_model)
 
     def get_models(self):
         folder_list = []
