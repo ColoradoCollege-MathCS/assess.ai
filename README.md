@@ -12,6 +12,15 @@ https://github.com/user-attachments/assets/82a473e8-4ae2-4352-b59b-a112da76b475
 - Load Huggingface models
 - Finetune models with summarization dataset
 - Model Evaluation (ROUGE, BLEU, METEOR)
+
+## Prerequisites
+- Python 3.8 to 3.11
+- git
+- Minimum: 8GB RAM, Recommended: 16GB RAM
+- Storage: 10GB+ free space
+- CPU: Multi-core processor supporting AVX2 instructions (AVX2 instructions are used in llama.cpp to run mistral-7B)
+- Text summarization datasets in “input_text” “target_text” format
+
 ## Installation
 
 1. Clone this repository:

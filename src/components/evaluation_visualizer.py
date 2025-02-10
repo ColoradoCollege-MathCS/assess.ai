@@ -397,33 +397,57 @@ class EvaluationVisualizer:
             save_dir = Path(save_dir)
             save_dir.mkdir(parents=True, exist_ok=True)
             
-            # Get max scroll position using existing class variables
+            # Store original settings
+            original_visible_samples = self.visible_samples
+            original_traditional_pos = self.current_traditional_pos
+            original_geval_pos = self.current_geval_pos
+
+            # Get total number of samples
             n_samples = len(next(iter(self.metrics_history.values())))
-            max_scroll = max(0, n_samples - self.visible_samples)
             
-            # Save traditional metrics at each position (Get a bar chart for each position)
-            for pos in range(max_scroll + 1):
-                # Use existing update methods
-                self.current_traditional_pos = pos
-                self._update_traditional_plot()
-                self.fig_traditional.savefig(
-                    save_dir / f'traditional_metrics_{pos+1:03d}.png',
+            # Create new figure for full traditional metrics
+            full_fig_traditional = Figure(figsize=(n_samples, 4))  # Larger figure for all samples
+            full_ax_traditional = full_fig_traditional.add_axes([0.1, 0.15, 0.85, 0.75])  # Adjusted axes for better visibility
+            
+            # Temporarily set visible_samples to show all data
+            self.visible_samples = n_samples
+            
+            # Plot all traditional metrics
+            self._plot_metrics(
+                full_ax_traditional,
+                ['rouge1', 'rouge2', 'rougeL', 'bleu', 'meteor', 'bert_f1'],
+                ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948'],
+                0,  # Start from beginning
+                True  # Normalize
+            )
+            
+            # Save full traditional metrics plot
+            full_fig_traditional.savefig(
+                save_dir / 'traditional_metrics_full.png',
+                bbox_inches='tight',
+                dpi=300,
+                facecolor='white'
+            )
+            
+            # If G-EVAL metrics are enabled, save them too
+            if self.plot_frame_geval.winfo_ismapped():
+                full_fig_geval = Figure(figsize=(16, 4))
+                full_ax_geval = full_fig_geval.add_axes([0.1, 0.15, 0.85, 0.75])
+                
+                self._plot_metrics(
+                    full_ax_geval,
+                    ['coherence', 'consistency', 'fluency', 'relevance'],
+                    ['#AF7AA1', '#FF9DA7', '#9C755F', '#BAB0AC'],
+                    0,  # Start from beginning
+                    False  # Don't normalize G-EVAL metrics
+                )
+                
+                full_fig_geval.savefig(
+                    save_dir / 'geval_metrics_full.png',
                     bbox_inches='tight',
                     dpi=300,
                     facecolor='white'
                 )
-            
-            # Save G-EVAL metrics at each position if enabled
-            if self.plot_frame_geval.winfo_ismapped():
-                for pos in range(max_scroll + 1):
-                    self.current_geval_pos = pos
-                    self._update_geval_plot()
-                    self.fig_geval.savefig(
-                        save_dir / f'geval_metrics_{pos+1:03d}.png',
-                        bbox_inches='tight',
-                        dpi=300,
-                        facecolor='white'
-                    )
             
             # Save radar plot if visible
             if self.final_frame.winfo_ismapped():
@@ -433,5 +457,16 @@ class EvaluationVisualizer:
                     dpi=300,
                     facecolor='white'
                 )
+            
+            # Restore original settings
+            self.visible_samples = original_visible_samples
+            self.current_traditional_pos = original_traditional_pos
+            self.current_geval_pos = original_geval_pos
+            
+            # Update the plots to restore original view
+            self._update_traditional_plot()
+            if self.plot_frame_geval.winfo_ismapped():
+                self._update_geval_plot()
+                
         except Exception as e:
             print(f"Error saving plots: {str(e)}")
