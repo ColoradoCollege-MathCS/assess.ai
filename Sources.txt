@@ -1,1 +1,18 @@
 
+Works Cited
+
+Avinash. “LLM Evaluation Metrics — BLEU, ROGUE and METEOR Explained.” Medium, 7 Aug. 2024, avinashselvam.medium.com/llm-evaluation-metrics-bleu-rogue-and-meteor-explained-a5d2b129e87f. Accessed 11 Feb. 2025.
+Bais, Gourav. “LLM Evaluation for Text Summarization.” Neptune.ai, 25 Sept. 2024, neptune.ai/blog/llm-evaluation-text-summarization. Accessed 7 Feb. 2025. (photo)
+Banerjee, Satanjeev, and Alon Lavie. METEOR: An Automatic Metric for MT Evaluation with Improved Correlation with Human Judgments. 2005.
+Bajaj, Ganesh. “When to Use BLEU Score: Evaluating Text Generation with N-Gram Precision.” Medium, Artificial Intelligence in Plain English, 26 Sept. 2024, ai.plainenglish.io/when-to-use-bleu-score-evaluating-text-generation-with-n-gram-precision-3431829a641e. Accessed 7 Feb. 2025. (photo)
+“BERT Score - a Hugging Face Space by Evaluate-Metric.” Huggingface.co, huggingface.co/spaces/evaluate-metric/bertscore.
+courtzc. “Evaluating the Performance of LLM Summarization Prompts with G-Eval.” Microsoft.com, 25 June 2024, learn.microsoft.com/en-us/ai/playbook/technology-guidance/generative-ai/working-with-llms/evaluation/g-eval-metric-for-summarization. Accessed 11 Feb. 2025.
+Falcão, Fabiano. “Metrics for Evaluating Summarization of Texts Performed by Transformers: How to Evaluate The….” Medium, 22 Apr. 2023, fabianofalcao.medium.com/metrics-for-evaluating-summarization-of-texts-performed-by-transformers-how-to-evaluate-the-b3ce68a309c3.
+Issiaka Faissal Compaore, et al. “AI-Driven Generation of News Summaries: Leveraging GPT and Pegasus Summarizer for Efficient Information Extraction.” Hal.science, 5 Feb. 2024, hal.science/hal-04437765, https://hal.science/hal-04437765. Accessed 11 Feb. 2025.
+Liu, Yang, et al. G-EVAL: NLG Evaluation Using GPT-4 with Better Human Alignment.
+Otten, Neri Van, and Neri Van Otten. “METEOR Metric in NLP: How It Works & How to Tutorial in Python.” Spot Intelligence, 26 Aug. 2024, spotintelligence.com/2024/08/26/meteor-metric-in-nlp-how-it-works-how-to-tutorial-in-python/.
+---. “ROUGE Metric in NLP: Complete Guide & How to Tutorial in Python.” Spot Intelligence, 12 Aug. 2024, spotintelligence.com/2024/08/12/rouge-metric-in-nlp/.
+Ruman. “BERT Score Explained | Medium.” Medium, 17 May 2024, rumn.medium.com/bert-score-explained-8f384d37bb06. Accessed 7 Feb. 2025. (photo)
+Yang, Xinyu, et al. “Navigating Dataset Documentations in AI: A Large-Scale Analysis of Dataset Cards on Hugging Face.” ArXiv.org, 24 Jan. 2024, arxiv.org/abs/2401.13822. Accessed 7 Feb. 2025.
+
+
