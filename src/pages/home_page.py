@@ -1,12 +1,8 @@
-import sys
 import tkinter as tk
-import io
+from tkinter import *
 import os
 from tkinter import ttk
-from tkinter import PhotoImage
-from subprocess import run
-from pages.llms_page import LLMsPage
-from utils.llm import LLM
+from pages.indiv_page import LLMPage
 from components import (
     LLMInput,
     TitleFrame,
@@ -19,7 +15,7 @@ class HomePage:
         self.root = root
         self.container = tk.Frame(self.root, bg="#D2E9FC")
         self.container.grid(row=1, column=1, sticky="nsew")
-        self.llmlist = None
+        self.llmlist = LLMList (self.container, self.root)
         self.show_page_callback = show_page_callback
         self.setup_page()
 
@@ -73,6 +69,8 @@ class HomePage:
         llm_lbl.grid(row=3,column=0, padx=20, pady=(5, 0),sticky="w")
         self.llm_lb = tk.Listbox(self.container, height=10)
         self.llm_lb.grid(row=4,column=0, padx=20, pady=10, sticky="nsew")
+
+        self.llm_lb.bind("<ButtonRelease-1>", self.model_selected) # bind list
         self.load_past_llms() #loading past llms CHANGE (changed)
 
 
@@ -88,7 +86,6 @@ class HomePage:
 
     def _setup_bindings(self):
         self.root.bind('<Escape>', lambda e: self.root.destroy())
-
 
     def load_evaluations(self):
         # cd to parent directory
@@ -107,16 +104,13 @@ class HomePage:
         except FileNotFoundError:
             print(f"Error: {eval_folder} not found.")
 
-
     def nav_to_llm(self):
         # change displaying page
         print("navigating to llm page...")
         self.show_page_callback("llms")
 
-
     def load_past_llms(self):
         # load past llms in to the listbox
-        self.llmlist = LLMList (self.container, self.root)# create LLMList object
         imported_models = self.llmlist.get_models() # get_models
 
         # write to listbox
@@ -125,6 +119,25 @@ class HomePage:
         for model in imported_models:
             count += 1
             self.llm_lb.insert(count, model)
+
+    def model_selected(self, event):
+        selection = self.llm_lb.curselection()
+        if selection:
+            self.selected_model = self.llm_lb.get(selection)
+            self.create_window(self.selected_model)
+
+    def create_window(self, model_name):
+        # main window object
+        new_win = Toplevel(self.root) # create toplevel widget
+
+        # set title + dimensions
+        new_win.title(model_name)
+        new_win.geometry("500x500")
+
+        # populate window with model specific material
+        self.detail_page = LLMPage(new_win, self.selected_model)
+
+
 
 
 
