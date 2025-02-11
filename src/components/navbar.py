@@ -4,11 +4,10 @@ import tkinter as tk
 
 # Navigation items
 nav_items = [
-    ("Home","home"),
+    ("Home", "home"),
     ("Evaluations", "evaluations"),
     ("LLMs", "llms"),
     ("Finetune", "finetune"),
-    ("Datasets", "datasets")
 ]
 
 class Navbar(tk.Frame):
@@ -95,7 +94,7 @@ class Navbar(tk.Frame):
             btn.bind("<Enter>", lambda e, b=btn_container, p=page: self._on_hover(b, p))
             btn.bind("<Leave>", lambda e, b=btn_container, p=page: self._on_leave(b, p))
         
-        self.set_active_page("chat")
+        self.set_active_page("home")
 
     def _handle_click(self, page):
         if page != self.current_page:

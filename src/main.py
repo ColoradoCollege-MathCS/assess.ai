@@ -43,7 +43,7 @@ class AssessAIGUI:
             if int(widget.grid_info()["column"]) == 1:
                 widget.destroy()
                 
-    def show_page(self, page_name, selected_model="None"):
+    def show_page(self, page_name):
         # Show the new page
         self._clear_content()
 
@@ -54,9 +54,7 @@ class AssessAIGUI:
         elif page_name == "finetune":
             self.current_page = FinetunePage(self.root)
         elif page_name == "home":
-            self.current_page = HomePage(self.root)
-        elif page_name == "datasets":
-            self.current_page = DatasetsPage(self.root)
+            self.current_page = HomePage(self.root, self.show_page)
 
 
 def main():
@@ -71,6 +69,7 @@ def main():
 
     # Initialize GUI
     app = AssessAIGUI(root)
+    app.show_page("home")
     
     # Start main loop
     root.mainloop()
