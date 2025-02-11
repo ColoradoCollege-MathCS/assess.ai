@@ -1,12 +1,12 @@
 import tkinter as tk
 import os
 from components.navbar import Navbar
-from pages.chat_page import ChatPage
 from pages.evaluation_page import EvaluationPage
 from pages.llms_page import LLMsPage
 from pages.finetune_page import FinetunePage
 from pages.projects_page import ProjectsPage
 from pages.home_page import HomePage
+
 
 # Set environment variable
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
@@ -22,7 +22,6 @@ class AssessAIGUI:
         self._configure_root()
         self._configure_grid()
         self._setup_navbar()
-        self.show_page("chat")  # Start with chat page
         
     def _configure_root(self):
         self.root.title("Assess.ai")
@@ -47,19 +46,16 @@ class AssessAIGUI:
     def show_page(self, page_name):
         # Show the new page
         self._clear_content()
-        
-        if page_name == "chat":
-            self.current_page = ChatPage(self.root)
-        elif page_name == "evaluations":
+
+        if page_name == "evaluations":
             self.current_page = EvaluationPage(self.root)
         elif page_name == "llms":
             self.current_page = LLMsPage(self.root)
         elif page_name == "finetune":
             self.current_page = FinetunePage(self.root)
-        elif page_name == "projects":
-            self.current_page = ProjectsPage(self.root)
         elif page_name == "home":
-            self.current_page = HomePage(self.root)
+            self.current_page = HomePage(self.root, self.show_page)
+
 
 def main():
     # Initialize root and components
@@ -73,6 +69,7 @@ def main():
 
     # Initialize GUI
     app = AssessAIGUI(root)
+    app.show_page("home")
     
     # Start main loop
     root.mainloop()
