@@ -25,7 +25,6 @@ class HomePage:
 
 
     def setup_page(self):
-<<<<<<< HEAD
         """Initialize and set up the homepage page """
         self._configure_root()
         self._configure_grid()

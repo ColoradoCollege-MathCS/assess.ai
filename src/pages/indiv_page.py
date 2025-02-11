@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 import sys
 import tkinter as tk
 import io
 from tkinter import ttk
-from components import (
-    LLMDetails
-)
+from components.llm_details import LLMDetails
 
 
 class LLMPage:
