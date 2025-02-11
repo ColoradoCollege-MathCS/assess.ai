@@ -1,5 +1,23 @@
 # Changelog
 
+## 2-10
+- Added cleaner LLM page
+- Eval graph saves fully
+
+## 2-6
+- Added GEVAL
+- Added bar chart and radar chart on eval page
+- Eval logs and graphs are savable
+
+## 2-3
+- Removed Chat
+- Added most evaluations (ROUGE, BLEU, METEOR)
+
+## 2-2
+- Added Matplotlib to Evaluation GUI
+- Support multiple models for evaluation and finetuning
+- Support multiple models for chat
+
 ## 1-31
 - Added Evaluation
 - Added Evaluation via GUI

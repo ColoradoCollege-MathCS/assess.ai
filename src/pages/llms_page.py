@@ -84,20 +84,4 @@ class LLMsPage:
             self.term_output = f"Error: {str(e)}"
 
         sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
         return self.term_output
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

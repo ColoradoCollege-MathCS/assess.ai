@@ -17,9 +17,23 @@ class EvaluationForm(Form):
     def setup_form(self):
         super().setup_form()
         
-        # Evaluation Button
+        geval_frame = tk.Frame(self.form, bg="white")
+        geval_frame.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(0, 10))
+            
+        # Add G-EVAL toggle after the range frame
+        # tk.BooleanVar sets a boolean value for Tkinter widgets
+        self.use_geval = tk.BooleanVar(value=True)
+        self.geval_toggle = tk.Checkbutton(
+            geval_frame,
+            text="Enable G-EVAL Metrics",
+            variable=self.use_geval,
+            bg="white",
+            font=("SF Pro Display", 12)
+        )
+        self.geval_toggle.pack(side=tk.LEFT)
+        
         button_frame = tk.Frame(self.form, bg="white")
-        button_frame.grid(row=3, column=0, columnspan=3, sticky="ew", pady=20)
+        button_frame.grid(row=4, column=0, columnspan=3, sticky="ew", pady=20)
         
         self.start_btn = tk.Button(
             button_frame,
@@ -30,7 +44,7 @@ class EvaluationForm(Form):
             bd=1
         )
         self.start_btn.pack(side=tk.LEFT, padx=5)
-    
+        
     def start_evaluation(self):
         validation_result = self.validate()
         if not validation_result:

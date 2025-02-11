@@ -25,6 +25,7 @@ class HomePage:
 
 
     def setup_page(self):
+<<<<<<< HEAD
         """Initialize and set up the homepage page """
         self._configure_root()
         self._configure_grid()
@@ -125,7 +126,6 @@ class HomePage:
         for model in imported_models:
             count += 1
             self.llm_lb.insert(count, model)
-
 
 
 

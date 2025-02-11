@@ -4,7 +4,6 @@ from components.navbar import Navbar
 from pages.evaluation_page import EvaluationPage
 from pages.llms_page import LLMsPage
 from pages.finetune_page import FinetunePage
-from pages.projects_page import ProjectsPage
 from pages.home_page import HomePage
 
 

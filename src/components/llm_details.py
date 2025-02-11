@@ -27,8 +27,8 @@ class LLMDetails(tk.Frame):
         self.llm_name_container = tk.Frame(self.container, bg="#D2E9FC")
         self.llm_name_container.grid(row=0, column=0, sticky="ew", padx=(5, 10), pady=(20, 5))
         self.llm_name_container.grid_columnconfigure(0, weight=1)
-
-        # LLM details container frame with rounded corners
+        
+	# LLM details container frame with rounded corners
         self.llm_details_container = RoundedFrame(self.container, "#FFFFFF", radius=50)
         self.llm_details_container.grid(row=1, column=0, sticky="nsew", padx=(20, 5), pady=10)
         self.llm_details_container.grid_rowconfigure(0, weight=1)
@@ -87,6 +87,4 @@ class LLMDetails(tk.Frame):
         f = open(model_dir) # read config file of selected model
         config = json.load(f) # load configurations
         return config
-
-
 

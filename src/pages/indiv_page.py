@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys
 import tkinter as tk
 import io
@@ -46,19 +47,3 @@ class LLMPage:
         # Name + Details
         self.details_frame = LLMDetails(self.container, self.LLM)
         self.details_frame.grid(row=0, column=0, sticky="ew", pady=(0,50))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

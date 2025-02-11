@@ -29,21 +29,12 @@ class LLM:
         return self.tokenizer.batch_decode(summarized_text)
 
     def import_LLM(self):
-        # check if LLM model_file folder already exists
-        # check for model_files path
-        folder_path = "../model_files"
-
-        # if not, create folder
-
         # save model and tokenizer
         path_name = f"../model_files/{self.model_id.replace('/', '_')}"
         self.model.save_pretrained("../model_files/" + path_name)
         self.tokenizer.save_pretrained("../model_files/" + path_name)
         print(self.model_id + " was successfully imported!")
 
-    def create_model_folder(self):
-        # create model_files folder
-        return
 
     def load_LLM(self):
         # check model type using AutoConfig

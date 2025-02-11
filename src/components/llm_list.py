@@ -79,6 +79,7 @@ class LLMList(tk.Frame):
         for folder in os.listdir(model_dir):  # list all folders in model_files folder
             if os.path.isdir(os.path.join(model_dir, folder)):
                 folder_list.append(folder)
+        
         return folder_list
 
     def write_list(self, list):
