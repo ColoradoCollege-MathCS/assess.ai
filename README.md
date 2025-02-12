@@ -49,8 +49,7 @@ python main.py
 
 ## Capstone Poster
 
-![new_new_poster](https://github.com/user-attachments/assets/fb0964d7-3173-4d2f-ae8e-0ac75174e592)
 
-
+![gen  notes](https://github.com/user-attachments/assets/caf90687-740a-4aff-86db-03f521896ed5)
 
 
