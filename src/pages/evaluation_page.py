@@ -5,7 +5,6 @@ from datetime import datetime
 from pathlib import Path
 from utils.evaluation import Evaluator
 from components.evaluation_form import EvaluationForm
-from components.evaluation_visualizer import EvaluationVisualizer
 
 class EvaluationPage:
     def __init__(self, root):
@@ -32,6 +31,7 @@ class EvaluationPage:
         ttk.Separator(content, orient="horizontal").grid(row=1, column=0, sticky="ew", padx=20)
         
         # Initialize visualizer before form
+        from components.evaluation_visualizer import EvaluationVisualizer
         self.visualizer = EvaluationVisualizer(content)
         
         self.form = EvaluationForm(content, self.handle_start_evaluation)
