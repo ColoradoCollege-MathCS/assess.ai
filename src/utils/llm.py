@@ -35,6 +35,7 @@ class LLM:
         self.tokenizer.save_pretrained("../model_files/" + path_name)
         print(self.model_id + " was successfully imported!")
 
+
     def load_LLM(self):
         # check model type using AutoConfig
         # dict of model classes
