@@ -1,5 +1,8 @@
 # Changelog
 
+## 2-11
+- Added home page
+
 ## 2-10
 - Added cleaner LLM page
 - Eval graph saves fully

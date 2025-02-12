@@ -3,8 +3,7 @@ Team Members: Ronan Takizawa, Kaylie Stuteville, Willa Polman, Anna Vu.
 
 AssessAI is a desktop software tool designed to help users evaluate and test the performance of large language models (LLMs) specifically in summarizing custom datasets. The tool allows clients to upload their datasets and assess how well various LLMs summarize their content. With this, users can determine how effectively these models could potentially serve their own projects.
 
-
-https://github.com/user-attachments/assets/82a473e8-4ae2-4352-b59b-a112da76b475
+https://github.com/user-attachments/assets/f7ffeffc-5cc3-40f8-82a3-7846976aca34
 
 
 
