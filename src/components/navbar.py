@@ -5,8 +5,8 @@ import tkinter as tk
 # Navigation items
 nav_items = [
     ("Home", "home"),
-    ("Evaluations", "evaluations"),
     ("LLMs", "llms"),
+    ("Evaluations", "evaluations"),
     ("Finetune", "finetune"),
 ]
 

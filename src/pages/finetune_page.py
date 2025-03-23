@@ -33,7 +33,7 @@ class FinetunePage:
         # Initialize the form component
         self.form = FinetuneForm(content, self.handle_start_finetuning)
         
-    def run_finetuning(self, config, dataset_path, model_path, start_idx, end_idx):
+    def run_finetuning(self, config, dataset_path, model_path, start_idx, end_idx, custom_folder_name=None):
         try:         
             # Initialize fine-tuning process
             self.form.update_status("Loading model...")
@@ -42,7 +42,7 @@ class FinetunePage:
             # Load dataset
             self.form.update_status(f"Loading dataset")
             try:
-                train_data = fine_tuner.load_dataset(dataset_path,start_idx,end_idx)
+                train_data = fine_tuner.load_dataset(dataset_path, start_idx, end_idx)
                 self.form.update_status(f"Successfully loaded {len(train_data)} samples from index range {start_idx}-{end_idx}")
             except ValueError as e:
                 raise ValueError(f"Failed to load dataset: {str(e)}")
@@ -63,7 +63,8 @@ class FinetunePage:
             
             output_directory = fine_tuner.fine_tune(
                 train_data,
-                progress_callback=progress_callback
+                progress_callback=progress_callback,
+                custom_folder_name=custom_folder_name  # Pass the custom folder name
             )
             
             # Update status on completion
@@ -75,11 +76,11 @@ class FinetunePage:
             self.root.after(0, lambda: self.form.update_status(f"Error: {str(e)}", is_error=True))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
-    def handle_start_finetuning(self, config, dataset_path, model_path, start_idx, end_idx):
+    def handle_start_finetuning(self, config, dataset_path, model_path, start_idx, end_idx, custom_folder_name=None):
         # Start fine-tuning in a separate thread
         thread = threading.Thread(
             target=self.run_finetuning,
-            args=(config, dataset_path, model_path, start_idx, end_idx),
+            args=(config, dataset_path, model_path, start_idx, end_idx, custom_folder_name),
             daemon=True
         )
         thread.start()
