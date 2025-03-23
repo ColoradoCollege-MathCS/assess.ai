@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import simpledialog
 from .form import Form
 
 """
@@ -51,6 +52,13 @@ class EvaluationForm(Form):
             return
             
         dataset_path, model_path, start_idx, end_idx = validation_result
+        
+        # Ask for folder name using a popup dialog
+        custom_folder_name = simpledialog.askstring(
+            "Custom Folder Name", 
+            "Enter a custom folder name (optional):",
+            parent=self.form
+        )
             
         # Disable start button
         self.start_btn.config(state="disabled")
@@ -61,5 +69,6 @@ class EvaluationForm(Form):
             model_path,
             start_idx,
             end_idx,
-            self.use_geval.get()  # Pass the G-EVAL toggle state
+            self.use_geval.get(),
+            custom_folder_name  # Pass the custom folder name
         )

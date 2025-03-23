@@ -47,7 +47,7 @@ class FineTuner:
         # Load dataset with dataset validation
         return load_dataset(data_path, start_idx=start_idx, end_idx=end_idx)
     
-    def fine_tune(self, train_data, progress_callback=None):
+    def fine_tune(self, train_data, progress_callback=None, custom_folder_name=None):
         try:
             # Create output directory with timestamp and range info
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -57,7 +57,12 @@ class FineTuner:
             base_dir.mkdir(exist_ok=True)
             
             # Include range info in output directory name
-            output_dir = base_dir / f"fine_tuned_{timestamp}_range_{start_idx}_{end_idx}"
+            if custom_folder_name and custom_folder_name.strip():
+                # Sanitize folder name to remove invalid characters
+                sanitized_name = "".join(c for c in custom_folder_name if c.isalnum() or c in [' ', '_', '-']).strip()
+                output_dir = base_dir / f"{sanitized_name}"
+            else:
+                output_dir = base_dir / f"fine_tuned_{timestamp}_range_{start_idx}_{end_idx}"
             output_dir.mkdir(parents=True)
             
             # Create TextDataset Object to easily load into Pytorch's Dataloader
