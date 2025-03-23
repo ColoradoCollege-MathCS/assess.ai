@@ -1,5 +1,6 @@
 import json
 import tkinter as tk
+from tkinter import simpledialog
 from utils.model_config import (
     validate_parameters,
     param_limits,
@@ -101,8 +102,22 @@ class FinetuneForm(Form):
             if not value:
                 return
             config["training"][param] = value
+        
+        # Ask for folder name using a popup dialog
+        custom_folder_name = simpledialog.askstring(
+            "Custom Folder Name", 
+            "Enter a custom folder name (optional):",
+            parent=self.form
+        )
             
         # Disable Finetuning button
         self.start_btn.config(state="disabled")
-        # Start training
-        self.start_callback(json.dumps(config), dataset_path, model_path, start_idx, end_idx)
+        # Start training with custom folder name
+        self.start_callback(
+            json.dumps(config), 
+            dataset_path, 
+            model_path, 
+            start_idx, 
+            end_idx, 
+            custom_folder_name
+        )

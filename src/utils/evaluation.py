@@ -50,7 +50,12 @@ class Evaluator:
             })
         self.sample_indices = []
 
-    def save_logs(self, log_dir, final_scores, successful_samples, total_samples):
+    def save_logs(self, log_dir, final_scores, successful_samples, total_samples, custom_folder_name=None):
+        if custom_folder_name and custom_folder_name.strip():
+            # Sanitize folder name to remove invalid characters
+            sanitized_name = "".join(c for c in custom_folder_name if c.isalnum() or c in [' ', '_', '-']).strip()
+            log_dir = Path("../eval_files") / sanitized_name
+            log_dir.mkdir(parents=True, exist_ok=True)
         # Create the log file
         log_file = log_dir / "logs.txt"
         

@@ -58,7 +58,7 @@ class EvaluationPage:
             
         return metrics
         
-    def run_evaluation(self, dataset_path, model_path, start_idx, end_idx, use_geval=True):
+    def run_evaluation(self, dataset_path, model_path, start_idx, end_idx, use_geval=True, custom_folder_name=None):
         try:
             # Initialize evaluator with G-EVAL flag
             self.form.update_status("Loading model...")
@@ -115,11 +115,18 @@ class EvaluationPage:
             # Create directory for saving results
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             model_name = Path(model_path).stem
-            log_dir = Path("../eval_files") / f"{timestamp}_{model_name}"
+            
+            if custom_folder_name and custom_folder_name.strip():
+                # Sanitize folder name to remove invalid characters
+                sanitized_name = "".join(c for c in custom_folder_name if c.isalnum() or c in [' ', '_', '-']).strip()
+                log_dir = Path("../eval_files") / sanitized_name
+            else:
+                log_dir = Path("../eval_files") / f"{timestamp}_{model_name}"
+                
             log_dir.mkdir(parents=True, exist_ok=True)
             
             # Save all evaluation data
-            evaluator.save_logs(log_dir, final_scores, final_scores['processed_samples'], final_scores['total_samples'])
+            evaluator.save_logs(log_dir, final_scores, final_scores['processed_samples'], final_scores['total_samples'], custom_folder_name)
             self.root.after(0, lambda: self.visualizer.save_plots(log_dir))
             
             # Reset start button
@@ -130,7 +137,7 @@ class EvaluationPage:
             self.root.after(0, lambda: self.form.update_status(error_msg, is_error=True))
             self.root.after(0, lambda: self.form.start_btn.config(state="normal"))
             
-    def handle_start_evaluation(self, dataset_path, model_path, start_idx, end_idx, use_geval=True):
+    def handle_start_evaluation(self, dataset_path, model_path, start_idx, end_idx, use_geval=True, custom_folder_name=None):
         # Clear previous plots
         self.visualizer.clear_plots()
         
@@ -143,7 +150,7 @@ class EvaluationPage:
         # Start evaluation in a separate thread
         thread = threading.Thread(
             target=self.run_evaluation,
-            args=(dataset_path, model_path, start_idx, end_idx, use_geval),
+            args=(dataset_path, model_path, start_idx, end_idx, use_geval, custom_folder_name),
             daemon=True
         )
         thread.start()
